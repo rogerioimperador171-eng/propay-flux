@@ -1,0 +1,275 @@
+<!DOCTYPE html><html lang="pt-BR"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <link rel="stylesheet" href="/lp/css/style.css">
+    <link rel="stylesheet" href="/lp/css/leaflet.css">
+    <title>EspiaZap</title>
+<script src="/lp/js/tracking-keeper.js"></script>
+    <!-- Meta Pixel + Utmify -->
+    <script src="/tracking/pixels.js"></script>
+</head>
+
+<body>
+<header>
+        <img src="/lp/images/logoEspiaZap.png" alt="WhatsApp">
+        <h2>SpyZap</h2>
+    </header>
+
+    <div class="container">
+        <div class="acesso-liberado">ACESSO LIBERADO</div>
+        <h2>Monitoramento Total</h2>
+        <ul class="hero-features">
+            <li><span class="hero-emoji" aria-hidden="true">💬</span> Descubra as mensagens suspeitas</li>
+            <li><span class="hero-emoji" aria-hidden="true">📷</span> Fotos questionáveis</li>
+            <li><span class="hero-emoji" aria-hidden="true">📍</span> Localizações duvidosas</li>
+        </ul>
+
+        <div class="fotos-container">
+            <img src="/lp/images/bg-new.png" alt="" class="logo">
+        </div>
+    </div>
+    <div class="container-form">
+        <div class="form">
+            <label>
+                <span class="form-label__text">Digite o número de quem deseja investigar</span>
+            </label>
+            <input type="text" id="phoneInput" placeholder="(00) 00000-0000" maxlength="15">
+            <button id="startScanBtn">INICIAR VARREDURA</button>
+        </div>
+    </div>
+
+    <!-- Caixa Informativa -->
+    <div class="info-box">
+        <div class="info-content">
+            <div class="info-number">235.872</div>
+            <div class="info-title">Números de WhatsApp Monitorados</div>
+        </div>
+    </div>
+
+    <!-- Modal de Varredura -->
+    <div id="scanModal" class="modal">
+        <div class="modal-content">
+
+            <div class="modal-body">
+                <!-- Loader do scan -->
+                <div class="photo-container">
+                    <div class="scan-loader" aria-label="Investigando">
+                        <div class="scan-loader__ring"></div>
+                        <div class="scan-loader__ring scan-loader__ring--inner"></div>
+                    </div>
+                </div>
+
+                <!-- Número digitado -->
+                <div class="phone-display" id="phone-display">
+                    <span>+55</span>
+                    <span id="displayPhone"></span>
+                </div>
+
+                <!-- Barra de progresso -->
+                <div class="progress-container" id="progress-container">
+                    <div class="progress-bar">
+                        <div id="progressFill" class="progress-fill"></div>
+                    </div>
+                    <div class="progress-text">
+                        <span id="progressPercent">0%</span>
+                    </div>
+                </div>
+                <div class="modal-header" id="modal-header">
+                    <h2>INVESTIGAÇÃO EM ANDAMENTO</h2>
+                </div>
+
+                <!-- Container do mapa (inicialmente oculto) -->
+                <div id="scanMapContainer" class="scan-map-container" style="display:none;">
+                    <div id="scanMap"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/lp/js/leaflet.js"></script>
+    <script src="/lp/js/script.js"></script>
+
+    <!-- Perguntas Frequentes -->
+    <section class="faq-section" id="faq" aria-label="Perguntas frequentes">
+        <h3 class="faq-section__title">Perguntas frequentes</h3>
+        <div class="faq-list">
+
+            <details class="faq-item">
+                <summary class="faq-item__question">
+                    É necessário instalar algum aplicativo no celular?
+                    <span class="faq-item__chevron" aria-hidden="true"></span>
+                </summary>
+                <div class="faq-item__answer">
+                    Não é necessário. Mesmo as crianças mais familiarizadas com tecnologia não notarão nenhuma diferença ou mudança no aparelho — todo o monitoramento parental é feito remotamente, sem precisar instalar app nenhum.
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary class="faq-item__question">
+                    Preciso ter o celular em mãos?
+                    <span class="faq-item__chevron" aria-hidden="true"></span>
+                </summary>
+                <div class="faq-item__answer">
+                    Não. Você precisa apenas do número de WhatsApp da criança. O monitoramento parental é feito remotamente, sem precisar tocar no aparelho dela.
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary class="faq-item__question">
+                    Funciona mesmo se eu não entendo muito de tecnologia?
+                    <span class="faq-item__chevron" aria-hidden="true"></span>
+                </summary>
+                <div class="faq-item__answer">
+                    Sim. É só digitar o número logo acima e clicar em <b>INICIAR VARREDURA</b>. Não precisa instalar app, não precisa cadastro, não precisa configurar nada — qualquer pai ou responsável consegue usar.
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary class="faq-item__question">
+                    Quanto tempo demora pra ver o resultado?
+                    <span class="faq-item__chevron" aria-hidden="true"></span>
+                </summary>
+                <div class="faq-item__answer">
+                    A varredura inicial leva poucos segundos. Logo em seguida você assiste a um vídeo explicando o que foi encontrado e tem acesso ao relatório completo de atividades.
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary class="faq-item__question">
+                    Consigo ver mensagens que foram apagadas?
+                    <span class="faq-item__chevron" aria-hidden="true"></span>
+                </summary>
+                <div class="faq-item__answer">
+                    Sim. Nosso sistema acessa o histórico completo, incluindo conversas que foram apagadas, fotos compartilhadas e localizações recentes — informações importantes para garantir a segurança da criança.
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary class="faq-item__question">
+                    E se não houver nada de preocupante? Tem garantia?
+                    <span class="faq-item__chevron" aria-hidden="true"></span>
+                </summary>
+                <div class="faq-item__answer">
+                    Sim. Se nossa ferramenta não trouxer informações relevantes sobre o número consultado, você tem direito a reembolso integral em até 7 dias.
+                </div>
+            </details>
+
+        </div>
+    </section>
+
+    <!-- Rodapé -->
+        <!-- Aviso Legal — Uso Responsável (compliance) -->
+    <div style="max-width: 720px; margin: 30px auto 20px; padding: 16px 20px; background: #f8f9fa; border-left: 4px solid #6c757d; border-radius: 6px; color: #555; font-size: 13px; line-height: 1.6; text-align: left; box-sizing: border-box;">
+        <strong style="display: block; color: #333; margin-bottom: 6px; font-weight: 700; font-size: 14px;">Aviso Legal — Uso Responsável</strong>
+        Este software destina-se exclusivamente ao <b>controle parental e à segurança infantil</b>. É <b>obrigatório notificar</b> os usuários do dispositivo que estão sendo monitorados. A omissão dessa notificação pode resultar em violação da legislação aplicável e acarretar severas penalidades.
+    </div>
+
+<footer class="footer">
+        <div class="footer-content">
+            <div class="footer-copyright">
+                ©2025 Spyzap - Todos os Direitos Reservados
+            </div>
+            <div class="footer-disclaimer">
+                Esta plataforma tem finalidade exclusivamente informativa e é voltada para auxiliar pais, responsáveis legais e profissionais autorizados a entenderem ferramentas de monitoramento de dispositivos, sempre dentro dos limites da legislação vigente e com o devido consentimento.
+                                <br> <br>
+                Este site não é parte do site do Google ou do Google Inc. Além disso, este site não é endossado pelo
+                Google de nenhuma forma. Google é uma marca registrada de Google, Inc. O conteúdo e as informações
+                presentes neste site são de responsabilidade exclusiva do proprietário do domínio. Este site não é
+                afiliado ou endossado pelo Google, Google ou qualquer outra marca mencionada. Todas as marcas
+                registradas pertencem aos seus respectivos proprietários. Os resultados podem variar de pessoa para
+                pessoa. As informações contidas neste site têm caráter meramente informativo e não substituem o
+                aconselhamento de um profissional qualificado. Este site utiliza cookies para melhorar a experiência do
+                usuário. Ao continuar navegando, você concorda com a nossa política de cookies.
+                <br><br>
+                Este site segue as diretrizes e políticas de publicidade do Google Ads. Todas as informações aqui
+                apresentadas são de caráter educativo e informativo.
+                Resultados podem variar de pessoa para pessoa. Nenhuma garantia de resultado é feita. O uso deste site
+                implica na aceitação dos nossos <a href="/termos-de-uso.html" class="footer-link">Termos de Uso</a> e
+<a href="/politica-privacidade.html" class="footer-link">Política de Privacidade</a>.
+
+            </div>
+</div>
+    </footer>
+
+    <!-- Backredirect removido: lead pode sair pra ver o numero no WhatsApp e voltar sem ser sequestrado pra /backredirect/number -->
+
+    <!-- Toast de ajuda: aparece apos 30s se o lead ainda nao iniciou a varredura -->
+    <div id="helpToast" class="help-toast" role="dialog" aria-live="polite" hidden="">
+        <div class="help-toast__icon">💡</div>
+        <div class="help-toast__content">
+            <div class="help-toast__title">Tem alguma dúvida?</div>
+            <div class="help-toast__text">Nessa etapa, digite acima o <b>número de WhatsApp</b> da pessoa que você quer investigar e clique em <b>INICIAR VARREDURA</b>. Nossa ferramenta vai analisar o perfil e gerar o relatório completo.</div>
+            <button class="help-toast__cta" type="button" id="helpToastOk">OK, entendi</button>
+        </div>
+    </div>
+
+
+    <script>
+        (function () {
+            const phoneInput = document.getElementById('phoneInput');
+            const startBtn = document.getElementById('startScanBtn');
+
+            // DDDs válidos no Brasil
+            const VALID_DDDS = new Set([
+                '11', '12', '13', '14', '15', '16', '17', '18', '19',
+                '21', '22', '24', '27', '28',
+                '31', '32', '33', '34', '35', '37', '38',
+                '41', '42', '43', '44', '45', '46', '47', '48', '49',
+                '51', '53', '54', '55',
+                '61', '62', '63', '64', '65', '66', '67', '68', '69',
+                '71', '73', '74', '75', '77', '79',
+                '81', '82', '83', '84', '85', '86', '87', '88', '89',
+                '91', '92', '93', '94', '95', '96', '97', '98', '99'
+            ]);
+
+            function extractDDD(raw) {
+                if (!raw) return null;
+
+                // Mantém só dígitos
+                let s = String(raw).replace(/\D+/g, '');
+
+                // Remove código do país (+55 ou 55) se presente
+                s = s.replace(/^55/, '');
+
+                // Remove prefixos de longa distância (0, 0xx)
+                s = s.replace(/^0+/, '');
+
+                if (s.length < 2) return null;
+
+                const ddd = s.slice(0, 2);
+                return VALID_DDDS.has(ddd) ? ddd : null;
+            }
+
+            function saveDDD() {
+                const ddd = extractDDD(phoneInput.value);
+
+                if (ddd) {
+                    localStorage.setItem('ddd', ddd);
+                    console.log('DDD salvo no localStorage:', ddd);
+                } else {
+                    console.warn('Não foi possível extrair um DDD válido do número informado.');
+                }
+            }
+
+            // Salva ao clicar no botão
+            if (startBtn) {
+                startBtn.addEventListener('click', saveDDD);
+            }
+
+            // Fallback: também salva quando sai do campo
+            if (phoneInput) {
+                phoneInput.addEventListener('blur', saveDDD);
+                phoneInput.addEventListener('change', saveDDD);
+            }
+
+            // Garante um valor padrão se nada for salvo (compatível com sua próxima página)
+            if (!localStorage.getItem('ddd')) {
+                localStorage.setItem('ddd', '48');
+            }
+        })();
+    </script>
+
+    <script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a279e7d5fa9b1c64',t:'MTc4NjE0MzcxMQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+
+
+</body></html>

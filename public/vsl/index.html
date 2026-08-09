@@ -1,0 +1,385 @@
+<!DOCTYPE html><html lang="pt-BR"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <link rel="stylesheet" href="css/style.css">
+    <title>EspiaZap</title>
+    
+<script src="js/tracking-keeper.js"></script>
+    
+
+    <script>!function(i,n){i._plt=i._plt||(n&&n.timeOrigin?n.timeOrigin+n.now():Date.now())}(window,performance);</script>
+<link rel="preload" href="/__l5e/assets-v1/d55012f0-ef4a-41e6-aa4a-d4af335f8e1d/espiazap-vsl.mp4" as="video" type="video/mp4">
+
+
+    <script id="utm-saver">
+        (function () {
+            'use strict';
+
+            // Configurações
+            const STORAGE_KEY = 'utm_params_saved';
+            const STORAGE_KEY_TIMESTAMP = 'utm_params_timestamp';
+
+            // Lista completa de parâmetros que queremos capturar e salvar
+            const paramsToCapture = new Set([
+                // UTMs padrão
+                'utm_source',
+                'utm_medium',
+                'utm_campaign',
+                'utm_term',
+                'utm_content',
+                'utm_id',
+
+                // UTMs estendidos
+                'utm_source_platform',
+                'utm_creative_format',
+                'utm_marketing_tactic',
+                'utm_adgroup',
+                'utm_campaign_id',
+                'utm_adset',
+                'utm_ad',
+                'utm_channel',
+
+                // IDs de rastreamento
+                'gclid',        // Google Ads
+                'gbraid',       // Google Ads (iOS 14.5+)
+                'wbraid',       // Google Ads (iOS 14.5+)
+                'msclkid',      // Microsoft Ads
+                'fbclid',       // Facebook Ads
+
+                // Parâmetros de afiliado
+                'campaign_id',
+                'adset_id',
+                'ad_id',
+                'sck',
+                'xcod',
+                'subid',
+                'aff_sub',
+                'aff_sub2'
+            ]);
+
+            /**
+             * Função principal que captura e salva os parâmetros
+             */
+            function captureAndSaveUTMs() {
+                try {
+                    // Pega os parâmetros da URL atual
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const capturedParams = {};
+                    let hasParams = false;
+
+                    // Filtra apenas os parâmetros que queremos
+                    for (const [key, value] of urlParams.entries()) {
+                        const keyLower = key.toLowerCase();
+
+                        // Verifica se é um parâmetro que queremos capturar
+                        if (paramsToCapture.has(keyLower) && value && value.trim() !== '') {
+                            capturedParams[key] = value.trim();
+                            hasParams = true;
+                        }
+                    }
+
+                    // Se encontrou parâmetros, salva no localStorage
+                    if (hasParams) {
+                        // Salva os parâmetros
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(capturedParams));
+
+                        // Salva o timestamp para referência
+                        localStorage.setItem(STORAGE_KEY_TIMESTAMP, new Date().toISOString());
+
+                        console.log('✅ UTMs capturadas e salvas:', capturedParams);
+                        return capturedParams;
+                    } else {
+                        console.log('ℹ️ Nenhum parâmetro UTM encontrado na URL atual');
+                        return null;
+                    }
+
+                } catch (error) {
+                    console.error('❌ Erro ao capturar UTMs:', error);
+                    return null;
+                }
+            }
+
+            /**
+             * Função para recuperar os parâmetros salvos (útil para debug)
+             */
+            function getSavedUTMs() {
+                try {
+                    const saved = localStorage.getItem(STORAGE_KEY);
+                    return saved ? JSON.parse(saved) : null;
+                } catch (error) {
+                    console.error('❌ Erro ao recuperar UTMs salvas:', error);
+                    return null;
+                }
+            }
+
+            /**
+             * Função para limpar os parâmetros salvos (útil para debug)
+             */
+            function clearSavedUTMs() {
+                localStorage.removeItem(STORAGE_KEY);
+                localStorage.removeItem(STORAGE_KEY_TIMESTAMP);
+                console.log('🗑️ UTMs salvas foram removidas');
+            }
+
+            /**
+             * Função para converter parâmetros salvos em query string
+             */
+            function getSavedUTMsAsQueryString() {
+                const saved = getSavedUTMs();
+                if (!saved) return '';
+
+                const params = new URLSearchParams();
+                for (const [key, value] of Object.entries(saved)) {
+                    params.set(key, value);
+                }
+                return params.toString();
+            }
+
+            // --- EXECUÇÃO PRINCIPAL ---
+
+            // Executa a captura assim que o script carrega
+            const captured = captureAndSaveUTMs();
+
+            // Disponibiliza funções globalmente para debug (opcional)
+            window.utmSaver = {
+                capture: captureAndSaveUTMs,
+                getSaved: getSavedUTMs,
+                clear: clearSavedUTMs,
+                getAsQueryString: getSavedUTMsAsQueryString
+            };
+
+            // Log de status para debug
+            console.log('🚀 UTM Saver carregado. Use window.utmSaver para debug.');
+
+        })();
+    </script>
+    <!-- Meta Pixel + Utmify -->
+    <script src="/tracking/pixels.js"></script>
+</head>
+
+<body>
+    <header>
+        <img src="images/whatsapp.png" alt="WhatsApp">
+        <h2>WhatsApp</h2>
+    </header>
+    <main>
+        <div class="container">
+            <div class="container-top" id="profile-pic">
+                <div class="title">ANALISE EM TEMPO REAL</div>
+            </div>
+            <div class="container-vsl">
+                <div class="title-vsl">
+                    <h3>ASSISTA O VIDEO ENQUANTO</h3>
+                    <p>o número é rastreado e as conversas são processadas</p>
+                </div>
+               <div class="ez-player" id="ezPlayer">
+                   <video id="ezVideo" class="ez-video" playsinline webkit-playsinline preload="auto" autoplay muted disablepictureinpicture x5-playsinline
+                          src="/__l5e/assets-v1/d55012f0-ef4a-41e6-aa4a-d4af335f8e1d/espiazap-vsl.mp4"></video>
+                   <button type="button" class="ez-unmute" id="ezUnmute">
+                       <span class="ez-unmute-icon">🔊</span>
+                       <span>Toque para ativar o som</span>
+                   </button>
+                   <div class="ez-bar">
+                       <div class="ez-track"><div class="ez-fill" id="ezFill"></div></div>
+                       <button type="button" class="ez-fs" id="ezFs" aria-label="Tela cheia">⛶</button>
+                   </div>
+               </div>
+               <script src="js/player.js" defer></script>
+
+            </div>
+
+            <div class="btn-under-vsl">
+                <!-- Botão Principal (Vermelho) -->
+                <button class="alert-button smartplayer-scroll-event" data-next-step="" data-default-href="/verificacao/index.html" data-img-href="/verificacao/index.html">
+                    <div class="button-content">
+                        <img src="images/whatsapp-icon.png" alt="WhatsApp" class="whatsapp-icon">
+                        <div class="button-text">
+                            <div>CONVERSAS SUSPEITAS ENCONTRADAS!</div>
+                            <div class="button-subtitle">Clique para acessar WhatsApp</div>
+                        </div>
+                    </div>
+                </button>
+            </div>
+
+            <div style="background-color: #282828; border-radius: 35px; padding: 10px;">
+                <div class="progress neon" data-width="0%">
+                    <div class="progress-text">0%</div>
+                    <div class="progress-bar">
+                        <div class="progress-text">0%</div>
+                    </div>
+                </div>
+                <!-- Texto dinâmico da análise -->
+                <div class="progress-status">
+                    <div class="status-text" id="statusText">Iniciando análise...</div>
+                    <div class="status-icon" id="statusIcon">🔍</div>
+                </div>
+            </div>
+
+
+
+
+            <br><br>
+
+            <div class="card-track">
+                <div class="tracker">
+                    <img src="images/point-map.gif" alt="">
+                    <div class="rastreamento">
+                        <p class="rastreamento-texto">Rastreando Dispositivo</p>
+                        <div class="barra-rastreamento">
+                            <div class="preenchimento"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="card-section">
+                <div class="card-body" id="card-msg">
+                    <img src="images/icon-msg.png" alt="">
+                    <div class="card-content">
+                        <p class="card-title" style="font-size: 18px;"><span class="spinner"></span> mensagens suspeitas
+                            (incluindo as apagadas)</p>
+                        <p class="card-description" style="font-size: 16px;">mensagens apagadas no celular contendo
+                            algum conteudo sexual nos últimos dias</p>
+                        <div class="card-result" style="display: none;">
+                            <span class="result-icon">⚠️</span>
+                            <span class="result-text">Encontramos <strong><span id="num-mensagens">25</span> mensagens
+                                    suspeitas</strong></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body" id="card-img">
+                    <img src="images/icon-img.png" alt="">
+                    <div class="card-content">
+                        <p class="card-title" style="font-size: 18px;"><span class="spinner"></span> Fotos Suspeitas</p>
+                        <p class="card-description" style="font-size: 16px;">Imagens identificadas com conteúdos de
+                            nudes</p>
+                        <div class="card-result" style="display: none;">
+                            <span class="result-icon">🖼️</span>
+                            <span class="result-text">Encontramos <strong><span id="num-imagens">35</span> imagens
+                                    suspeitas</strong></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body" id="card-loc">
+                    <img src="images/icon-loc.png" alt="">
+                    <div class="card-content">
+                        <p class="card-title" style="font-size: 18px;"><span class="spinner"></span> Localizações
+                            Suspeitas</p>
+                        <p class="card-description" style="font-size: 16px;">Localizações como motel, casa de massagem e
+                            pontos de prostituição
+                        </p>
+                        <div class="card-result" style="display: none;">
+                            <span class="result-icon">📍</span>
+                            <span class="result-text">Encontramos <strong><span id="num-localizacoes">8</span>
+                                    localizações suspeitas</strong></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Container para toasts das etapas -->
+        <div class="stage-toast-container" id="stageToastContainer"></div>
+
+        <div class="toast-notification" id="toastNotification" style="display: none;">
+            <button class="toast-close" onclick="fecharToast()">�</button>
+            <div class="toast-header">
+                <span class="toast-icon">⚠️</span>
+                <div class="toast-content">
+                    <div class="toast-title">Conversas suspeitas encontradas!</div>
+                    <div class="toast-subtitle">Clique para verificar no WhatsApp</div>
+                </div>
+            </div>
+            <a data-next-step="" data-default-href="/verificacao/index.html" data-img-href="/verificacao/index.html" href="/verificacao/index.html"><button class="toast-button">Acessar WhatsApp</button></a>
+        </div>
+
+    </main>
+    <script src="js/load-profile-image.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/photo-fetch.js"></script>
+
+    <!-- ADICIONE ESTE SCRIPT NO FINAL DO SEU <body> -->
+    <script id="backredirect-manager">
+        (function () {
+            // 1. Defina a URL de destino do seu backredirect
+            const redirectURL = "/lp/index.html";
+
+            // 2. Chave para salvar os dados no navegador
+            const STORAGE_KEY = "safe_utm_params_v3";
+
+            // 3. Lista de todos os parâmetros que queremos salvar e repassar
+            const paramsToKeep = new Set([
+                "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content", "utm_id",
+                "utm_source_platform", "utm_creative_format", "utm_marketing_tactic",
+                "utm_adgroup", "utm_campaign_id", "utm_adset", "utm_ad", "utm_channel",
+                "gclid", "gbraid", "wbraid", "msclkid", "fbclid",
+                "campaign_id", "adset_id", "ad_id",
+                "sck", "xcod", "subid", "aff_sub", "aff_sub2",
+                 "src"
+            ]);
+
+            // 4. Função que captura e salva os parâmetros da URL atual
+            const saveParamsFromCurrentUrl = () => {
+                try {
+                    const currentParams = new URLSearchParams(window.location.search);
+                    const paramsToSave = new URLSearchParams();
+
+                    for (const [key, value] of currentParams.entries()) {
+                        if (paramsToKeep.has(key.toLowerCase()) && value) {
+                            paramsToSave.set(key, value);
+                        }
+                    }
+
+                    // Salva no localStorage apenas se encontrou algum parâmetro
+                    if (paramsToSave.toString()) {
+                        localStorage.setItem(STORAGE_KEY, paramsToSave.toString());
+                    }
+                } catch (e) {
+                    console.error("Backredirect Manager: Erro ao salvar parâmetros.", e);
+                }
+            };
+
+            // 5. Função que constrói a URL final para o redirecionamento
+            const buildRedirectUrl = () => {
+                const destination = new URL(redirectURL, window.location.href);
+                const savedParams = localStorage.getItem(STORAGE_KEY) || "";
+
+                // Anexa os parâmetros salvos à URL de destino
+                destination.search += (destination.search ? '&' : '') + savedParams;
+
+                return destination.href;
+            };
+
+            // 6. Função que executa o redirecionamento
+            let isRedirecting = false;
+            const performRedirect = () => {
+                if (isRedirecting) return;
+                isRedirecting = true;
+
+                const targetUrl = buildRedirectUrl();
+                window.location.replace(targetUrl); // .replace() é ideal para não poluir o histórico
+            };
+
+            // --- LÓGICA PRINCIPAL ---
+
+            // Salva os parâmetros assim que o script é executado
+            saveParamsFromCurrentUrl();
+
+            // Prepara o histórico do navegador para capturar o clique no botão "voltar"
+            history.pushState({ managedBy: "backredirect-manager" }, ""); // Adiciona um estado nosso
+
+            window.addEventListener('popstate', function () {
+                // Quando o usuário tenta voltar, nós o mantemos na página e o redirecionamos
+                history.pushState({ managedBy: "backredirect-manager" }, "");
+                performRedirect();
+            });
+
+        })();
+    </script>
+
+    <script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a282a395fc98a419',t:'MTc4NjIzNTI4OA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+
+
+</body></html>

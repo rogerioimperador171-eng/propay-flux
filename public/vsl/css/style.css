@@ -1,0 +1,1288 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    background: url('../images/bg.webp');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    min-height: 100vh;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    background-color: white;
+}
+
+header h2 {
+    margin: 0 0 0 10px;
+    font-size: 24px;
+    color: #49C858;
+}
+
+header img {
+    height: 30px;
+}
+
+.container {
+    text-align: center;
+    padding: 20px;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+/* Design responsivo para desktop mantendo aparência mobile */
+@media (min-width: 768px) {
+    .container {
+        max-width: 95%;
+        padding: 30px 20px;
+    }
+}
+
+.container-top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.container-top .title {
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    background-color: #D51000;
+    padding: 5px 15px;
+    border-radius: 15px;
+    display: inline-block;
+    margin: 15px auto;
+}
+
+.container-top img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin-top: 10px;
+    border: 3px solid black;
+}
+
+.container-vsl {
+    display: flex;
+    flex-direction: column;
+    padding: 30px 15px;
+    background-color: black;
+    border-radius: 15px;
+    max-width: 100%;
+    margin-bottom: 20px;
+}
+
+/* Design responsivo para desktop mantendo aparência mobile */
+@media (min-width: 768px) {
+    .container-vsl {
+        padding: 30px 20px;
+    }
+}
+
+.title-vsl {
+    text-align: center;
+    color: white;
+    margin-bottom: 20px;
+}
+
+.title-vsl h3 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.title-vsl p {
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.sound-vsl {
+    text-align: center;
+    color: white;
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: 400;
+}
+
+.btn-under-vsl {
+    display: none;
+    width: 100%;
+    text-align: center;
+    margin: 0 auto;
+}
+
+/* Botão de Alerta para Conversas Suspeitas - WhatsApp */
+.alert-button {
+    width: 100%;
+    background: linear-gradient(45deg, #25D366, #128C7E, #25D366);
+    background-size: 200% 200%;
+    border: none;
+    border-radius: 25px;
+    padding: 25px 35px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 
+        0 8px 25px rgba(37, 211, 102, 0.4),
+        0 4px 15px rgba(255, 255, 255, 0.2) inset,
+        0 -4px 15px rgba(0, 0, 0, 0.2) inset;
+    transition: all 0.3s ease;
+    animation: pulse 2s infinite, gradient-shift 3s ease-in-out infinite, shine 4s ease-in-out infinite;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 80px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.alert-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 
+        0 12px 35px rgba(37, 211, 102, 0.6),
+        0 6px 20px rgba(255, 255, 255, 0.4) inset,
+        0 -6px 20px rgba(0, 0, 0, 0.3) inset,
+        0 0 30px rgba(37, 211, 102, 0.5);
+    animation: pulse 1.5s infinite, gradient-shift 2s ease-in-out infinite, shine 2s ease-in-out infinite, glow-intense 1s ease-in-out infinite;
+}
+
+.alert-button:active {
+    transform: translateY(-1px);
+}
+
+.alert-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), rgba(255,255,255,0.6), rgba(255,255,255,0.4), transparent);
+    transition: left 0.8s;
+    z-index: 1;
+}
+
+.alert-button::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    animation: rotate-light 6s linear infinite;
+    z-index: 0;
+}
+
+.alert-button:hover::before {
+    left: 100%;
+}
+
+.button-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    position: relative;
+    z-index: 2;
+    width: 100%;
+}
+
+.whatsapp-icon {
+    width: 32px;
+    height: 32px;
+    filter: brightness(0) invert(1);
+    animation: shake 1s infinite;
+}
+
+.button-text {
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    text-align: center;
+    line-height: 1.3;
+}
+
+.button-subtitle {
+    font-size: 12px;
+    opacity: 0.9;
+    font-weight: normal;
+}
+
+/* Animações dos botões */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+
+@keyframes gradient-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-2px); }
+    75% { transform: translateX(2px); }
+}
+
+@keyframes shine {
+    0% { 
+        box-shadow: 
+            0 8px 25px rgba(37, 211, 102, 0.4),
+            0 4px 15px rgba(255, 255, 255, 0.2) inset,
+            0 -4px 15px rgba(0, 0, 0, 0.2) inset;
+    }
+    50% { 
+        box-shadow: 
+            0 8px 25px rgba(37, 211, 102, 0.6),
+            0 6px 20px rgba(255, 255, 255, 0.4) inset,
+            0 -6px 20px rgba(0, 0, 0, 0.3) inset,
+            0 0 20px rgba(37, 211, 102, 0.3);
+    }
+    100% { 
+        box-shadow: 
+            0 8px 25px rgba(37, 211, 102, 0.4),
+            0 4px 15px rgba(255, 255, 255, 0.2) inset,
+            0 -4px 15px rgba(0, 0, 0, 0.2) inset;
+    }
+}
+
+@keyframes rotate-light {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes glow-intense {
+    0%, 100% { 
+        filter: brightness(1) saturate(1);
+    }
+    50% { 
+        filter: brightness(1.1) saturate(1.2);
+    }
+}
+
+.card-section {
+    background-color: #f0f0f0;
+    padding: 20px;
+    border-radius: 25px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    max-width: 100%;
+}
+
+/* Design responsivo para desktop mantendo aparência mobile */
+@media (min-width: 768px) {
+    .card-section {
+        margin: 20px auto;
+    }
+}
+
+.card-body {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    color: #333;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    padding: 15px;
+    margin: 20px 0;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.card-body img {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+}
+
+.card-body p {
+    margin: 5px 0;
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.btn {
+    background-color: #D51000;
+    color: white;
+    border: none;
+    padding: 15px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.214);
+}
+
+.btn:hover {
+    background-color: #b00c00;
+}
+
+.spinner {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #ccc;
+    border-top: 2px solid #333;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* === BARRA DE PROGRESSO VERDE NEON CORRIGIDA === */
+.progress {
+    position: relative;
+    z-index: 5;
+    background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
+    border: 3px solid #00ff41;
+    border-radius: 25px;
+    display: inline-block;
+    box-shadow: 
+        0 0 20px rgba(0, 255, 65, 0.5),
+        0 0 40px rgba(0, 255, 65, 0.3),
+        0 5px 15px rgba(0, 0, 0, 0.3),
+        inset 0 2px 5px rgba(0, 255, 65, 0.1);
+    overflow: hidden;
+    animation: neon-border-pulse 2s ease-in-out infinite;
+}
+
+.progress-text {
+    position: absolute;
+    font: bold 16px/40px 'Courier New', monospace;
+    text-align: center;
+    top: 0;
+    left: 0;
+    color: #00ff41;
+    text-shadow: 
+        0 0 10px rgba(0, 255, 65, 0.8),
+        0 0 20px rgba(0, 255, 65, 0.6),
+        0 0 30px rgba(0, 255, 65, 0.4);
+    z-index: 15;
+    animation: neon-text-glow 1.5s ease-in-out infinite alternate;
+}
+
+.progress,
+.progress-bar,
+.progress-text {
+    width: 350px;
+    max-width: 350px;
+    height: 40px;
+}
+
+.progress .progress-text:first-child {
+    z-index: 10;
+    color: #00ff41;
+}
+
+.progress .progress-text:last-child {
+    z-index: 15;
+    color: #000;
+    text-shadow: none;
+    font-weight: 900;
+}
+
+.progress-bar {
+    overflow: hidden;
+    position: relative;
+    z-index: 12;
+    border-radius: 20px;
+    width: 0;
+    background: linear-gradient(90deg, 
+        #00ff41 0%, 
+        #00cc33 25%, 
+        #00ff41 50%, 
+        #33ff66 75%, 
+        #00ff41 100%);
+    background-size: 200% 100%;
+    box-shadow: 
+        0 0 15px rgba(0, 255, 65, 0.8),
+        0 0 25px rgba(0, 255, 65, 0.6),
+        inset 0 2px 10px rgba(255, 255, 255, 0.3),
+        inset 0 -2px 10px rgba(0, 0, 0, 0.3);
+    transition: width 0.3s ease-out;
+    animation: neon-bar-flow 3s linear infinite;
+}
+
+.progress-bar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.4), 
+        rgba(255, 255, 255, 0.6), 
+        rgba(255, 255, 255, 0.4), 
+        transparent);
+    animation: neon-shine 2s ease-in-out infinite;
+}
+
+.progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    background: linear-gradient(90deg, 
+        rgba(0, 255, 65, 0.3) 0%, 
+        rgba(0, 255, 65, 0.1) 50%, 
+        rgba(0, 255, 65, 0.3) 100%);
+    border-radius: 18px;
+    animation: neon-inner-glow 1.8s ease-in-out infinite alternate;
+}
+
+/* Animações da barra de progresso verde neon */
+@keyframes neon-border-pulse {
+    0%, 100% {
+        border-color: #00ff41;
+        box-shadow: 
+            0 0 20px rgba(0, 255, 65, 0.5),
+            0 0 40px rgba(0, 255, 65, 0.3),
+            0 5px 15px rgba(0, 0, 0, 0.3),
+            inset 0 2px 5px rgba(0, 255, 65, 0.1);
+    }
+    50% {
+        border-color: #33ff66;
+        box-shadow: 
+            0 0 30px rgba(0, 255, 65, 0.7),
+            0 0 60px rgba(0, 255, 65, 0.5),
+            0 5px 15px rgba(0, 0, 0, 0.3),
+            inset 0 2px 8px rgba(0, 255, 65, 0.2);
+    }
+}
+
+@keyframes neon-text-glow {
+    0% {
+        text-shadow: 
+            0 0 10px rgba(0, 255, 65, 0.8),
+            0 0 20px rgba(0, 255, 65, 0.6),
+            0 0 30px rgba(0, 255, 65, 0.4);
+    }
+    100% {
+        text-shadow: 
+            0 0 15px rgba(0, 255, 65, 1),
+            0 0 25px rgba(0, 255, 65, 0.8),
+            0 0 35px rgba(0, 255, 65, 0.6);
+    }
+}
+
+@keyframes neon-bar-flow {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 200% 0%; }
+}
+
+@keyframes neon-shine {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+@keyframes neon-inner-glow {
+    0% {
+        background: linear-gradient(90deg, 
+            rgba(0, 255, 65, 0.3) 0%, 
+            rgba(0, 255, 65, 0.1) 50%, 
+            rgba(0, 255, 65, 0.3) 100%);
+    }
+    100% {
+        background: linear-gradient(90deg, 
+            rgba(0, 255, 65, 0.5) 0%, 
+            rgba(0, 255, 65, 0.3) 50%, 
+            rgba(0, 255, 65, 0.5) 100%);
+    }
+}
+
+/* Responsividade da barra de progresso */
+@media (max-width: 480px) {
+    .progress,
+    .progress-bar,
+    .progress-text {
+        width: 280px;
+        max-width: 280px;
+        height: 35px;
+    }
+    
+    .progress-text {
+        font-size: 14px;
+        line-height: 35px;
+    }
+}
+
+@media (max-width: 320px) {
+    .progress,
+    .progress-bar,
+    .progress-text {
+        width: 250px;
+        max-width: 250px;
+        height: 30px;
+    }
+    
+    .progress-text {
+        font-size: 12px;
+        line-height: 30px;
+    }
+}
+
+/* === FIM DA BARRA DE PROGRESSO === */
+
+.tracker {
+    margin: 20px auto;
+    padding: 20px;
+    background: #48FC2B;
+    border: 2px solid black;
+    border-radius: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tracker img {
+    width: 70px;
+    height: 70px;
+    margin-right: 10px;
+}
+
+.rastreamento {
+    width: 100%;
+    max-width: 300px;
+    margin: 20px auto;
+    text-align: center;
+}
+
+.rastreamento-texto {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.barra-rastreamento {
+    width: 100%;
+    height: 20px;
+    background: #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+    border: 2px solid #ccc;
+}
+
+.barra-rastreamento .preenchimento {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #00c851, #28a745);
+    transition: width 0.5s ease;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(40, 167, 69, 0.3);
+    animation: pulseGreen 2s ease-in-out infinite;
+}
+
+@keyframes pulseGreen {
+    0%, 100% {
+        box-shadow: 0 0 10px rgba(40, 167, 69, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(40, 167, 69, 0.6);
+    }
+}
+
+/* NOTIFICAÇÃO TOAST - Conversas Suspeitas WhatsApp */
+.toast-notification {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #ff4444, #ff6666);
+    color: white;
+    padding: 16px 24px;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(255, 68, 68, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    max-width: 90vw;
+    width: auto;
+    min-width: 320px;
+    z-index: 1000;
+    animation: slideUp 0.5s ease-out, pulse 2s ease-in-out infinite 1s;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.toast-icon {
+    font-size: 24px;
+    animation: shake 1s infinite;
+    flex-shrink: 0;
+}
+
+.toast-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.toast-title {
+    font-weight: bold;
+    font-size: 16px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+.toast-subtitle {
+    font-size: 13px;
+    opacity: 0.9;
+    font-weight: normal;
+}
+
+.toast-button {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    backdrop-filter: blur(5px);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+.toast-button:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.toast-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.toast-close:hover {
+    opacity: 1;
+}
+
+/* Animações dos toasts */
+@keyframes slideUp {
+    from {
+        transform: translateX(-50%) translateY(100px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+}
+
+.toast-notification.hiding {
+    animation: slideDown 0.3s ease-in forwards;
+}
+
+@keyframes slideDown {
+    to {
+        transform: translateX(-50%) translateY(100px);
+        opacity: 0;
+    }
+}
+
+/* Sistema de Textos Dinâmicos da Análise */
+.progress-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: 15px auto;
+    padding: 12px 20px;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 15px;
+    border: 1px solid rgba(0, 255, 65, 0.3);
+    max-width: 400px;
+    backdrop-filter: blur(10px);
+    box-shadow: 
+        0 4px 15px rgba(0, 0, 0, 0.3),
+        0 0 20px rgba(0, 255, 65, 0.2);
+    transition: all 0.3s ease;
+}
+
+.status-text {
+    color: #00ff41;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+    transition: all 0.3s ease;
+    flex: 1;
+}
+
+.status-icon {
+    font-size: 20px;
+    animation: pulse-icon 2s ease-in-out infinite;
+    transition: all 0.3s ease;
+}
+
+/* Estados especiais para diferentes tipos de mensagem */
+.progress-status.error {
+    background: rgba(220, 53, 69, 0.9);
+    border-color: rgba(220, 53, 69, 0.3);
+    animation: shake-status 0.5s ease-in-out;
+}
+
+.progress-status.warning {
+    background: rgba(255, 193, 7, 0.9);
+    border-color: rgba(255, 193, 7, 0.3);
+}
+
+.progress-status.warning .status-text {
+    color: #000;
+    text-shadow: none;
+}
+
+.progress-status.success {
+    background: rgba(40, 167, 69, 0.9);
+    border-color: rgba(40, 167, 69, 0.3);
+}
+
+.progress-status.processing {
+    background: rgba(0, 123, 255, 0.9);
+    border-color: rgba(0, 123, 255, 0.3);
+}
+
+/* Animações do status */
+@keyframes pulse-icon {
+    0%, 100% { 
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% { 
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+}
+
+@keyframes shake-status {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.status-text.changing {
+    animation: fade-in-status 0.5s ease-out;
+}
+
+@keyframes fade-in-status {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Estilos para caixas de resultados suspeitos */
+.card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1;
+}
+
+.card-title {
+    font-weight: bold;
+    font-size: 16px;
+    margin: 0;
+    color: #333;
+}
+
+.card-description {
+    font-size: 12px;
+    color: #666;
+    margin: 0;
+    line-height: 1.3;
+    opacity: 0.8;
+}
+
+.card-result {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: rgba(220, 53, 69, 0.1);
+    border: 1px solid rgba(220, 53, 69, 0.3);
+    border-radius: 8px;
+    animation: slideInResult 0.5s ease-out;
+}
+
+.result-icon {
+    font-size: 16px;
+}
+
+.result-text {
+    font-size: 13px;
+    color: #dc3545;
+    font-weight: 600;
+}
+
+/* Estados das caixas */
+.card-body.inactive {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.card-body.processing {
+    background: rgba(0, 123, 255, 0.05);
+    border-color: rgba(0, 123, 255, 0.2);
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.1);
+}
+
+.card-body.completed {
+    background: rgba(220, 53, 69, 0.05);
+    border-color: rgba(220, 53, 69, 0.3);
+    box-shadow: 0 0 15px rgba(220, 53, 69, 0.2);
+    animation: pulseAlert 2s ease-in-out infinite;
+}
+
+@keyframes slideInResult {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulseAlert {
+    0%, 100% {
+        box-shadow: 0 0 15px rgba(220, 53, 69, 0.2);
+    }
+    50% {
+        box-shadow: 0 0 25px rgba(220, 53, 69, 0.4);
+    }
+}
+
+/* Sistema de Toasts para Notificações das Etapas */
+.stage-toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+
+.stage-toast {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    color: white;
+    padding: 12px 16px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(220, 53, 69, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    min-width: 280px;
+    max-width: 320px;
+    transform: translateX(100%);
+    opacity: 0;
+    animation: slideInToast 0.5s ease-out forwards;
+    position: relative;
+    overflow: hidden;
+}
+
+.stage-toast.warning {
+    background: linear-gradient(135deg, #ffc107, #e0a800);
+    color: #000;
+    box-shadow: 0 4px 20px rgba(255, 193, 7, 0.3);
+}
+
+.stage-toast.success {
+    background: linear-gradient(135deg, #28a745, #1e7e34);
+    color: white;
+    box-shadow: 0 4px 20px rgba(40, 167, 69, 0.3);
+}
+
+.toast-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+}
+
+.toast-title {
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 1.2;
+}
+
+.toast-message {
+    font-size: 12px;
+    opacity: 0.9;
+    line-height: 1.3;
+}
+
+@keyframes slideInToast {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.stage-toast.hiding {
+    animation: slideOutToast 0.5s ease-in forwards;
+}
+
+@keyframes slideOutToast {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+/* Responsividade geral */
+@media (max-width: 768px) {
+    .toast-notification {
+        bottom: 10px;
+        left: 10px;
+        right: 10px;
+        transform: none;
+        max-width: none;
+        min-width: auto;
+        padding: 14px 20px;
+        flex-direction: column;
+        text-align: center;
+        gap: 12px;
+    }
+
+    .stage-toast-container {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+    }
+    
+    .stage-toast {
+        min-width: auto;
+        max-width: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .progress-status {
+        margin: 10px 15px;
+        padding: 10px 15px;
+        max-width: none;
+    }
+    
+    .status-text {
+        font-size: 14px;
+    }
+    
+    .status-icon {
+        font-size: 18px;
+    }
+    
+    .card-description {
+        font-size: 11px;
+    }
+    
+    .card-title {
+        font-size: 15px;
+    }
+    
+    .result-text {
+        font-size: 12px;
+    }
+    
+    .alert-button {
+        padding: 22px 25px;
+        margin-bottom: 15px;
+        min-height: 75px;
+    }
+    
+    .button-text {
+        font-size: 15px;
+    }
+    
+    .whatsapp-icon {
+        width: 28px;
+        height: 28px;
+    }
+}
+
+@media (max-width: 320px) {
+    .progress-status {
+        gap: 8px;
+        padding: 8px 12px;
+    }
+    
+    .status-text {
+        font-size: 13px;
+    }
+    
+    .status-icon {
+        font-size: 16px;
+    }
+    
+    .alert-button {
+        padding: 20px 22px;
+        min-height: 70px;
+    }
+    
+    .button-text {
+        font-size: 14px;
+    }
+    
+    .button-subtitle {
+        font-size: 11px;
+    }
+    
+    .whatsapp-icon {
+        width: 26px;
+        height: 26px;
+    }
+}
+
+/* ========= Bloco de foto progressivo (photo-fetch.js) ========= */
+.photo-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin: 12px 0;
+}
+
+.photo-frame {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    position: relative;
+    background: #1f1f1f;
+    box-shadow: 0 0 0 2px rgba(37, 211, 102, 0.2);
+}
+
+.photo-block .shimmer {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        90deg,
+        #1f1f1f 0%,
+        #2e2e2e 25%,
+        #3a3a3a 50%,
+        #2e2e2e 75%,
+        #1f1f1f 100%
+    );
+    background-size: 200% 100%;
+    animation: spyzap-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes spyzap-shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Overrides necessários porque .container-top img já define border/width */
+.photo-block .photo-image {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+    display: none;
+    border: 0 !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+}
+
+.photo-block.loaded .shimmer {
+    display: none;
+}
+
+.photo-block.loaded .photo-image {
+    display: block;
+    opacity: 0;
+    animation: spyzap-photo-fade 0.4s ease-out forwards;
+}
+
+@keyframes spyzap-photo-fade {
+    to { opacity: 1; }
+}
+
+.photo-status {
+    color: #1a1a1a;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    text-align: center;
+    margin: 0;
+    min-height: 16px;
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
+}
+
+.photo-block.loaded .photo-status {
+    display: none;
+}
+
+.photo-block.hidden {
+    display: none;
+}
+
+@media (max-width: 600px) {
+    .photo-frame {
+        width: 85px;
+        height: 85px;
+    }
+
+    .photo-status {
+        font-size: 12px;
+    }
+}
+
+
+/* ==========================================================================
+   Player da VSL (vídeo próprio, sem pular/adiantar)
+   Bloco isolado — não altera nenhum estilo existente acima.
+   ========================================================================== */
+.ez-player {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+  line-height: 0;
+}
+.ez-video {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: #000;
+}
+.ez-player:fullscreen,
+.ez-player:-webkit-full-screen {
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ez-player:fullscreen .ez-video,
+.ez-player:-webkit-full-screen .ez-video {
+  max-height: 100%;
+  width: 100%;
+  object-fit: contain;
+}
+.ez-unmute {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 0;
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: center;
+  padding: 12px;
+  z-index: 3;
+  transition: opacity 0.25s ease;
+}
+.ez-unmute-icon {
+  font-size: 30px;
+  line-height: 1;
+}
+.ez-unmute.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.ez-bar {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 0;
+  background: none;
+  line-height: 1;
+}
+.ez-track,
+.ez-fill {
+  display: none;
+}
+.ez-fs {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  font-size: 11px;
+  line-height: 20px;
+  cursor: pointer;
+}
+.ez-fs:hover {
+  background: rgba(0, 0, 0, 0.65);
+}
+
