@@ -1,0 +1,67 @@
+# Netlify — build do app (Vite / TanStack Start) + Netlify Functions do PIX
+#
+# IMPORTANTE: no build da Netlify o Nitro usa o preset "netlify" (ver
+# vite.config.ts). Nesse preset os arquivos estáticos saem em `dist/` e a
+# função de SSR em `.netlify/functions-internal/server`. Publicar `dist/client`
+# fazia o deploy falhar na etapa "Deploying" (diretório inexistente).
+[build]
+  command = "npm run build"
+  publish = "dist"
+  functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[functions]
+  node_bundler = "esbuild"
+  directory = "netlify/functions"
+
+# As funções já declaram `config.path`, mas mantemos os redirects como
+# garantia caso o roteamento por path não esteja habilitado no site.
+[[redirects]]
+  from = "/api/public/pix/create"
+  to = "/.netlify/functions/pix-create"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/public/pix/status"
+  to = "/.netlify/functions/pix-status"
+  status = 200
+  force = true
+
+# Vídeo da VSL hospedado no CDN de assets da Lovable.
+# Na Netlify o caminho /__l5e/* é encaminhado (proxy) para o CDN.
+[[redirects]]
+  from = "/__l5e/*"
+  to = "https://project--a961d776-c6ea-4be6-b79f-024cdf40fbfa.lovable.app/__l5e/:splat"
+  status = 200
+  force = true
+
+# Entrada do funil: a landing page estática
+[[redirects]]
+  from = "/"
+  to = "/lp/index.html"
+  status = 200
+
+# Demais rotas do app React (ex.: /checkout) vão para a função SSR do Nitro.
+# Sem `force`, então qualquer arquivo estático do funil continua com prioridade.
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/server"
+  status = 200
+
+[[headers]]
+  for = "/tracking/pixels.js"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+
+[[headers]]
+  for = "/vsl/js/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+[[headers]]
+  for = "/media/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

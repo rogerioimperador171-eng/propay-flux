@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>WhatsApp Desbloqueado | EspiaZap</title>
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    <script src="js/tracking-keeper.js"></script>
+    <!-- Meta Pixel + Utmify -->
+    <script src="/tracking/pixels.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+        html,body{margin:0;padding:0;}
+        body{font-family:'Poppins',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0b141a;color:#e9edef;overflow-x:hidden;}
+        .wa-top{position:sticky;top:0;z-index:20;background:#1f2c33;padding:14px 16px 12px;box-shadow:0 2px 10px rgba(0,0,0,.35);}
+        .wa-top__row{display:flex;align-items:center;gap:10px;}
+        .wa-top__logo{width:30px;height:30px;flex:0 0 auto;}
+        .wa-top__title{font-size:17px;font-weight:700;margin:0;line-height:1.2;}
+        .wa-top__sub{font-size:11.5px;color:#8696a0;margin-top:2px;}
+        .wa-status{margin-top:10px;display:flex;align-items:center;gap:7px;background:rgba(37,211,102,.12);border:1px solid rgba(37,211,102,.35);border-radius:8px;padding:7px 10px;font-size:11.5px;color:#25d366;font-weight:600;}
+        .wa-dot{width:8px;height:8px;border-radius:50%;background:#25d366;animation:pulseDot 1.4s infinite;flex:0 0 auto;}
+        @keyframes pulseDot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.8)}}
+
+        .wa-wrap{max-width:520px;margin:0 auto;padding:14px 12px 150px;}
+        .wa-alert{background:linear-gradient(135deg,#7f1d1d,#b91c1c);border-radius:12px;padding:12px 14px;font-size:12.5px;line-height:1.5;font-weight:500;}
+        .wa-alert b{font-weight:800;}
+
+        .wa-section-title{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#8696a0;font-weight:700;margin:18px 4px 8px;}
+
+        .chat{display:flex;align-items:center;gap:12px;background:#1f2c33;border-radius:12px;padding:11px 12px;margin-bottom:8px;position:relative;overflow:hidden;}
+        .chat__avatar{width:46px;height:46px;border-radius:50%;flex:0 0 auto;background:linear-gradient(135deg,#3a4a54,#22323b);filter:blur(1px);}
+        .chat__body{flex:1;min-width:0;}
+        .chat__name{font-size:14px;font-weight:600;display:flex;align-items:center;gap:6px;}
+        .chat__msg{font-size:12.5px;color:#8696a0;margin-top:3px;filter:blur(3.5px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;user-select:none;}
+        .chat__meta{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex:0 0 auto;}
+        .chat__time{font-size:10.5px;color:#8696a0;}
+        .chat__badge{background:#25d366;color:#0b141a;font-size:10.5px;font-weight:800;border-radius:20px;padding:1px 7px;}
+        .tag{font-size:9.5px;font-weight:800;border-radius:5px;padding:2px 6px;letter-spacing:.03em;}
+        .tag--red{background:rgba(255,59,48,.16);color:#ff6b60;}
+        .tag--amber{background:rgba(255,204,0,.16);color:#ffd84d;}
+        .chat__lock{position:absolute;inset:0;background:rgba(11,20,26,.05);}
+
+        .media-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
+        .media{position:relative;aspect-ratio:1/1;border-radius:10px;background:linear-gradient(135deg,#37474f,#22323b);overflow:hidden;display:flex;align-items:center;justify-content:center;}
+        .media::after{content:'';position:absolute;inset:0;backdrop-filter:blur(6px);background:rgba(0,0,0,.25);}
+        .media span{position:relative;z-index:2;font-size:18px;}
+
+        .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+        .stat{background:#1f2c33;border-radius:12px;padding:12px;text-align:center;}
+        .stat__num{font-size:20px;font-weight:800;color:#ff6b60;}
+        .stat__lbl{font-size:11px;color:#8696a0;margin-top:2px;line-height:1.3;}
+
+        .offer{margin-top:18px;background:linear-gradient(160deg,#128c7e,#075e54);border-radius:16px;padding:18px 16px;text-align:center;}
+        .offer__title{font-size:18px;font-weight:800;margin:0 0 6px;}
+        .offer__text{font-size:12.5px;line-height:1.55;color:rgba(255,255,255,.9);margin:0 0 14px;}
+        .offer__price{font-size:12px;color:rgba(255,255,255,.75);text-decoration:line-through;}
+        .offer__now{font-size:30px;font-weight:800;line-height:1.1;margin:2px 0 14px;}
+        .cta{display:block;background:#fff;color:#0f8a4b;text-decoration:none;font-weight:800;font-size:15px;padding:15px 14px;border-radius:40px;box-shadow:0 8px 22px rgba(0,0,0,.3);animation:ctaPulse 2s infinite;}
+        @keyframes ctaPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
+        .offer__note{font-size:10.5px;color:rgba(255,255,255,.8);margin-top:10px;line-height:1.5;}
+
+        .sticky-cta{position:fixed;left:0;right:0;bottom:0;z-index:60;background:rgba(11,20,26,.96);border-top:1px solid rgba(255,255,255,.08);padding:10px 12px calc(10px + env(safe-area-inset-bottom));}
+        .sticky-cta__inner{max-width:520px;margin:0 auto;}
+        .sticky-cta a{display:block;background:#25d366;color:#053b21;text-decoration:none;font-weight:800;font-size:15px;text-align:center;padding:14px;border-radius:40px;}
+        .sticky-cta__timer{text-align:center;font-size:11px;color:#8696a0;margin-bottom:6px;}
+        .sticky-cta__timer b{color:#ff6b60;}
+        .footer{max-width:520px;margin:0 auto;padding:18px 14px 0;font-size:10px;line-height:1.6;color:#5f6f78;text-align:center;}
+    </style>
+</head>
+<body>
+    <div class="wa-top">
+        <div class="wa-top__row">
+            <img class="wa-top__logo" src="images/whatsapp-logo.png" alt="WhatsApp">
+            <div>
+                <h1 class="wa-top__title">WhatsApp Desbloqueado</h1>
+                <div class="wa-top__sub">+55 <span id="dddOut">48</span> 9XXXX-XXXX · última sincronização agora</div>
+            </div>
+        </div>
+        <div class="wa-status"><span class="wa-dot"></span> Conexão ativa — prévia liberada por tempo limitado</div>
+    </div>
+
+    <div class="wa-wrap">
+        <div class="wa-alert">
+            <b>Conteúdo suspeito encontrado!</b><br>
+            As conversas, fotos e áudios <span id="alvoTexto">dele</span> já estão no nosso servidor. A prévia abaixo está <b>censurada</b> — libere o acesso completo para ver tudo sem bloqueio.
+        </div>
+
+        <div class="wa-section-title">Conversas recuperadas</div>
+        <div id="chatList"></div>
+
+        <div class="wa-section-title">Fotos e vídeos ocultos</div>
+        <div class="media-grid">
+            <div class="media"><span>📷</span></div>
+            <div class="media"><span>▶</span></div>
+            <div class="media"><span>📷</span></div>
+            <div class="media"><span>▶</span></div>
+            <div class="media"><span>📷</span></div>
+            <div class="media"><span>📷</span></div>
+        </div>
+
+        <div class="wa-section-title">Resumo do monitoramento</div>
+        <div class="stats">
+            <div class="stat"><div class="stat__num" id="stMsg">148</div><div class="stat__lbl">Mensagens suspeitas</div></div>
+            <div class="stat"><div class="stat__num" id="stFoto">35</div><div class="stat__lbl">Fotos censuradas</div></div>
+            <div class="stat"><div class="stat__num">12</div><div class="stat__lbl">Áudios recuperados</div></div>
+            <div class="stat"><div class="stat__num">2</div><div class="stat__lbl">Localizações suspeitas</div></div>
+        </div>
+
+        <div class="offer">
+            <h2 class="offer__title">Liberar acesso completo ao WhatsApp</h2>
+            <p class="offer__text">Veja todas as conversas (inclusive apagadas), fotos, áudios e localizações em tempo real, sem instalar nada no aparelho.</p>
+            <div class="offer__price">de R$ 129,90</div>
+            <div class="offer__now">R$ 38,97</div>
+            <a class="cta_link cta" href="/checkout" id="ctaTop">LIBERAR ACESSO COMPLETO — R$ 38,97</a>
+            <div class="offer__note">Pagamento único via Pix · Acesso imediato após a confirmação</div>
+        </div>
+
+        <div class="footer">
+            Ferramenta destinada exclusivamente ao controle parental e à segurança familiar. É obrigatório notificar o usuário do dispositivo monitorado.<br>
+            ©2025 Spyzap — Todos os direitos reservados.
+        </div>
+    </div>
+
+    <div class="sticky-cta">
+        <div class="sticky-cta__inner">
+            <div class="sticky-cta__timer">Prévia expira em <b id="timer">04:59</b></div>
+            <a class="cta_link" href="/checkout" id="ctaFixo">Liberar R$ 38,97</a>
+        </div>
+    </div>
+
+    <script>
+    (function(){
+        // Alvo escolhido na etapa de verificação (parceiro / parceira)
+        var alvo = 'marido';
+        try { alvo = localStorage.getItem('spyTarget') || 'marido'; } catch(e){}
+        var ela = alvo === 'esposa';
+        var el = document.getElementById('alvoTexto');
+        if (el) el.textContent = ela ? 'dela' : 'dele';
+
+        // DDD capturado na landing page
+        var ddd = '48';
+        try { ddd = localStorage.getItem('ddd') || '48'; } catch(e){}
+        var dOut = document.getElementById('dddOut');
+        if (dOut) dOut.textContent = ddd;
+
+        // Números da varredura (mesmo formato das páginas anteriores)
+        var chats = [
+            { suf:'6063', hora:'01:11', tag:'Conteúdo suspeito detectado', tipo:'red', badge:'7' },
+            { suf:'8302', hora:'23:48', tag:'Mensagens apagadas recuperadas', tipo:'red', badge:'12' },
+            { suf:'2428', hora:'22:05', tag:'Imagens suspeitas encontradas', tipo:'amber', badge:'4' },
+            { suf:'7381', hora:'20:37', tag:'Áudios recuperados', tipo:'amber', badge:'3' },
+            { suf:'0032', hora:'19:12', tag:'Localização compartilhada', tipo:'red', badge:'5' }
+        ];
+        var fake = 'Oii, to com sdds, tá podendo falar agora? apaga depois';
+        var html = chats.map(function(c){
+            return '<div class="chat">'
+                + '<div class="chat__avatar"></div>'
+                + '<div class="chat__body">'
+                +   '<div class="chat__name">+55 ' + ddd + ' 9XXXX-' + c.suf + '</div>'
+                +   '<div class="chat__msg">' + fake + '</div>'
+                +   '<div style="margin-top:5px"><span class="tag tag--' + c.tipo + '">' + c.tag + '</span></div>'
+                + '</div>'
+                + '<div class="chat__meta"><span class="chat__time">' + c.hora + '</span><span class="chat__badge">' + c.badge + '</span></div>'
+                + '<div class="chat__lock"></div>'
+                + '</div>';
+        }).join('');
+        var list = document.getElementById('chatList');
+        if (list) list.innerHTML = html;
+
+        // Números do relatório (se salvos nas etapas anteriores)
+        try {
+            var n = JSON.parse(localStorage.getItem('vslNumbers') || 'null');
+            if (n) {
+                if (n.mensagens) document.getElementById('stMsg').textContent = n.mensagens;
+                if (n.imagens) document.getElementById('stFoto').textContent = n.imagens;
+            }
+        } catch(e){}
+
+        // Contador de urgência
+        var restante = 299;
+        var t = document.getElementById('timer');
+        var iv = setInterval(function(){
+            restante--;
+            if (restante <= 0) { restante = 0; clearInterval(iv); }
+            var m = String(Math.floor(restante/60)).padStart(2,'0');
+            var s = String(restante%60).padStart(2,'0');
+            if (t) t.textContent = m + ':' + s;
+        }, 1000);
+    })();
+    </script>
+</body>
+</html>

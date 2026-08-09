@@ -1,0 +1,273 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #e8e0d4;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.container {
+    width: 100%;
+    max-width: 580px;
+    margin: 0 auto;
+}
+
+.verification-card {
+    background: white;
+    border-radius: 20px;
+    padding: 40px 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    position: relative;
+}
+
+.main-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #2c2c2c;
+    line-height: 1.2;
+    margin-bottom: 30px;
+}
+
+.main-title .highlight {
+    font-weight: 900;
+    color: #2c2c2c;
+}
+
+.question {
+    font-size: 22px;
+    font-weight: 600;
+    color: #e74c3c;
+    margin-bottom: 40px;
+}
+
+.options-container {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    align-items: flex-end;
+    margin-bottom: 40px;
+    flex-wrap: nowrap;
+}
+.options-container .button {
+    flex: 1;
+    max-width: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.option:hover {
+    transform: translateY(-5px);
+}
+
+.option.selected {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(39, 174, 96, 0.3);
+}
+
+.character-image {
+    width: 100%;
+    margin: 0 auto 15px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.character-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+.option-button {
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: underline;
+    width: 100%;
+}
+
+.option-button:hover {
+    background: #229954;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+}
+
+.option.selected .option-button {
+    background: #1e8449;
+    box-shadow: 0 5px 20px rgba(39, 174, 96, 0.4);
+}
+
+.update-info {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.update-text {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.update-date {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2c2c2c;
+}
+
+.continue-button-container {
+    margin: 30px 0;
+    text-align: center;
+}
+
+.continue-button {
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+}
+
+.continue-button:hover {
+    background: #229954;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+}
+
+.continue-button:active {
+    transform: translateY(0);
+}
+
+.explanation-section {
+    margin-top: 30px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border-left: 4px solid #27ae60;
+}
+
+.explanation-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2c2c2c;
+    margin-bottom: 10px;
+}
+
+.explanation-text {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Responsividade */
+@media (max-width: 480px) {
+    .container {
+        padding: 15px;
+        margin: 10px;
+    }
+    
+    .title {
+        font-size: 20px;
+        line-height: 1.3;
+    }
+    
+    .question {
+        font-size: 16px;
+    }
+    
+    .options-container {
+        gap: 10px;
+        margin: 25px 0;
+    }
+
+    .options-container .button {
+        max-width: 48%;
+    }
+
+    .character-image {
+        margin-bottom: 10px;
+    }
+
+    .option-button {
+        font-size: 14px;
+        padding: 10px 12px;
+    }
+    
+    .continue-button {
+        font-size: 16px;
+        padding: 12px 25px;
+    }
+    
+    .explanation-section {
+        padding: 15px;
+        margin-top: 20px;
+    }
+    
+    .explanation-title {
+        font-size: 16px;
+    }
+    
+    .explanation-text {
+        font-size: 13px;
+    }
+}
+
+/* Animações */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.verification-card {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.option {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.option:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.option:nth-child(2) {
+    animation-delay: 0.2s;
+}
+

@@ -1,0 +1,193 @@
+<!DOCTYPE html><html lang="pt-BR"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Verificação de Espionagem - SpyZap</title>
+    <link rel="stylesheet" href="css/verificacao.css">
+    <script src="js/tracking-keeper.js"></script>
+    <!-- Meta Pixel + Utmify -->
+    <script src="/tracking/pixels.js"></script>
+</head>
+
+<body>
+<div class="container">
+        <div class="verification-card">
+            <h1 class="main-title">
+                Para conseguirmos<br>
+                concluir a <span class="highlight">VERIFICAÇÃO</span><br>
+                de espionagem<br>
+                <span class="highlight">COMPLETA</span> responda:
+            </h1>
+
+            <h2 class="question">Ele(a) é seu/sua:</h2>
+
+            <div class="options-container">
+                <div class="button">
+                    <div class="character-image">
+                        <img src="images/homem-novo.png" alt="Homem">
+                    </div>
+                    <button class="option-button" onclick="window.location.href='/marido/index.html'">
+                        Parceiro
+                    </button>
+                </div>
+
+                <div class="button">
+                    <div class="character-image">
+                        <img src="images/mulher-nova.png" alt="Mulher">
+                    </div>
+                    <button class="option-button" onclick="window.location.href='/esposa/index.html'">
+                        Parceira
+                    </button>
+                </div>
+            </div>
+
+            <div class="update-info">
+                <p class="update-text">Ferramenta Atualizada:</p>
+                <p class="update-date" id="currentDate">Carregando...</p>
+            </div>
+
+            <div class="explanation-section">
+                <h3 class="explanation-title">Por que solicitamos essa verificação?</h3>
+                <p class="explanation-text">
+                    Essa verificação é feita para que o monitoramente seja executado de forma perfeita, e sem erros.,
+                    garantindo resultados mais eficazes e sem falsos positivos.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/verificacao.js"></script>
+
+    <script>
+        // --- UTM helpers ---
+        function getUTMQueryFromCurrentURL() {
+            const src = new URLSearchParams(window.location.search);
+            const utm = new URLSearchParams();
+            const keep = new Set([
+                 'gclid', 'gbraid', 'wbraid', 'msclkid', 'fbclid',
+                'sck', 'xcod', 'subid', 'aff_sub', 'aff_sub2',
+                'campaign_id', 'adset_id', 'ad_id', 'src'
+            ]);
+            for (const [k, v] of src.entries()) {
+                if (k.toLowerCase().startsWith("utm_") || keep.has(k.toLowerCase())) utm.set(k, v);
+            }
+            return utm;
+        }
+
+        function appendUTMsToUrl(url) {
+            const utms = getUTMQueryFromCurrentURL();
+            if (!utms.toString()) return url;
+
+            // monta URL relativa preservando query/hash existentes
+            const target = new URL(url, window.location.href);
+            utms.forEach((v, k) => {
+                if (!target.searchParams.has(k)) target.searchParams.set(k, v);
+            });
+
+            // retorna relativo (sem origin) p/ manter seu routing
+            return target.pathname + (target.search || "") + (target.hash || "");
+        }
+
+        // Atualiza data “Ferramenta Atualizada”
+        document.addEventListener("DOMContentLoaded", () => {
+            const el = document.getElementById("currentDate");
+            if (el) {
+                try {
+                    el.textContent = new Date().toLocaleDateString("pt-BR", {
+                        day: "2-digit",
+                        month: "long",
+                        year: "numeric"
+                    });
+                } catch {
+                    el.textContent = new Date().toLocaleDateString("pt-BR");
+                }
+            }
+        });
+
+        // Ajusta os botões para anexar UTMs
+        document.addEventListener("DOMContentLoaded", () => {
+            const buttons = document.querySelectorAll(".option-button");
+
+            buttons.forEach((btn) => {
+                // tenta extrair o destino do onclick inline (./marido/ ou ./esposa/)
+                const inline = btn.getAttribute("onclick");
+                let target = null;
+                if (inline) {
+                    const m = inline.match(/window\.location\.href\s*=\s*['"]([^'"]+)['"]/);
+                    if (m && m[1]) target = m[1];
+                }
+                // fallback (se quiser, pode trocar p/ data-href no HTML)
+                if (!target) target = "./";
+
+                // remove o onclick inline p/ evitar navegações duplas
+                btn.removeAttribute("onclick");
+
+                btn.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    localStorage.setItem('spyTarget', target.includes('marido') ? 'marido' : 'esposa');
+                    const dest = target.includes('marido') ? '/marido/index.html' : '/esposa/index.html';
+                    window.location.href = appendUTMsToUrl(dest);
+                });
+            });
+        });
+
+    </script>
+
+    <script id="backredirect-manager">
+        (function () {
+            const redirectURL = "/vsl/index.html";
+            const STORAGE_KEY = "safe_utm_params_v3";
+            const paramsToKeep = new Set([
+                "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content", "utm_id",
+                "utm_source_platform", "utm_creative_format", "utm_marketing_tactic",
+                "utm_adgroup", "utm_campaign_id", "utm_adset", "utm_ad", "utm_channel",
+                "gclid", "gbraid", "wbraid", "msclkid", "fbclid",
+                "campaign_id", "adset_id", "ad_id",
+                "sck", "xcod", "subid", "aff_sub", "aff_sub2"
+            ]);
+
+            const saveParamsFromCurrentUrl = () => {
+                try {
+                    const currentParams = new URLSearchParams(window.location.search);
+                    const paramsToSave = new URLSearchParams();
+                    for (const [key, value] of currentParams.entries()) {
+                        if (paramsToKeep.has(key.toLowerCase()) && value) {
+                            paramsToSave.set(key, value);
+                        }
+                    }
+                    if (paramsToSave.toString()) {
+                        localStorage.setItem(STORAGE_KEY, paramsToSave.toString());
+                    }
+                } catch (e) {
+                    console.error("Backredirect Manager: Erro ao salvar parâmetros.", e);
+                }
+            };
+
+            const buildRedirectUrl = () => {
+                const destination = new URL(redirectURL, window.location.href);
+                const savedParams = localStorage.getItem(STORAGE_KEY) || "";
+                destination.search += (destination.search ? '&' : '') + savedParams;
+                return destination.href;
+            };
+
+            let isRedirecting = false;
+            const performRedirect = () => {
+                if (isRedirecting) return;
+                isRedirecting = true;
+                const targetUrl = buildRedirectUrl();
+                window.location.replace(targetUrl);
+            };
+
+            saveParamsFromCurrentUrl();
+            history.pushState({ managedBy: "backredirect-manager" }, "");
+            window.addEventListener('popstate', function () {
+                history.pushState({ managedBy: "backredirect-manager" }, "");
+                performRedirect();
+            });
+        })();
+    </script>
+
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a28345f949aef532',t:'MTc4NjI0MTkzOQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+
+
+</body></html>

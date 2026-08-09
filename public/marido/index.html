@@ -1,0 +1,1316 @@
+<!DOCTYPE html><html lang="pt-BR"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Relatório Confidencial | EspiaZap</title>
+    <script src="js/tracking-keeper.js"></script>
+    <!-- Bootstrap CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    <!-- Poppins Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<!-- Google tag (gtag.js) -->
+    <script async="" src="https://www.googletagmanager.com/gtag/js?id=AW-11289495469"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'AW-11289495469');
+    </script>
+
+    <style>
+        :root {
+            --primary-green: #25D366;
+            --dark-green: #128C7E;
+            --light-green: #DCF8C6;
+            --background-color: #000000;
+            --text-dark: #2c3e50;
+            --text-light: #7f8c8d;
+            --white: #ffffff;
+            --danger: #ff3b30;
+            --warning: #ffcc00;
+            --success: #34c759;
+            --border-radius: 12px;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* ===== 1. BARRA DE URGÊNCIA NO TOPO ===== */
+        .urgency-bar {
+            position: sticky;
+            top: 0;
+            z-index: 9999;
+            background: linear-gradient(135deg, #d32f2f, #b71c1c);
+            color: #fff;
+            text-align: center;
+            padding: 10px 15px;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .urgency-bar .timer-icon {
+            font-size: 16px;
+        }
+        .urgency-bar #countdown {
+            font-weight: 800;
+            font-size: 15px;
+            color: #ffeb3b;
+            min-width: 50px;
+        }
+
+        /* ===== 2. TOASTS DE ESCASSEZ ===== */
+        .scarcity-toast {
+            position: fixed;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: #fff;
+            border-left: 4px solid var(--primary-green);
+            border-radius: 10px;
+            padding: 12px 16px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            z-index: 9998;
+            max-width: 340px;
+            width: 90%;
+            opacity: 0;
+            transition: all 0.4s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .scarcity-toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        .scarcity-toast .toast-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--primary-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .scarcity-toast .toast-icon svg {
+            width: 16px;
+            height: 16px;
+            fill: #fff;
+        }
+        .scarcity-toast .toast-text {
+            font-size: 12px;
+            color: var(--text-dark);
+            font-weight: 500;
+            line-height: 1.3;
+        }
+        .scarcity-toast .toast-text strong {
+            color: var(--danger);
+        }
+
+        /* ===== TOAST WHATSAPP (OPCIONAL) ===== */
+        .whatsapp-toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            color: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.3);
+            font-weight: 600;
+            font-size: 16px;
+            max-width: 350px;
+            width: 90%;
+            z-index: 99999;
+            opacity: 0;
+            transition: all 0.5s ease;
+            text-align: center;
+        }
+        .whatsapp-toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        .whatsapp-toast-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .whatsapp-toast .whatsapp-logo {
+            width: 40px;
+            height: 40px;
+            animation: pulseWpp 2s infinite;
+        }
+        @keyframes pulseWpp {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        .whatsapp-button {
+            background: #fff;
+            color: #25D366;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        .whatsapp-button:hover {
+            background: #f0f0f0;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+        .whatsapp-description {
+            font-size: 13px;
+            margin-bottom: 12px;
+            opacity: 0.9;
+        }
+        .whatsapp-toast-close {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 24px;
+            height: 24px;
+            background: rgba(0,0,0,0.2);
+            border: none;
+            border-radius: 50%;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+        .whatsapp-mini-fab {
+            position: fixed;
+            bottom: 20px;
+            right: 16px;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            background: #25D366;
+            color: #fff;
+            padding: 10px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+            cursor: pointer;
+            z-index: 99999;
+            font-size: 13px;
+            font-weight: 600;
+            animation: pulseWpp 2s infinite;
+            text-decoration: none;
+        }
+        .whatsapp-mini-fab img {
+            width: 24px;
+            height: 24px;
+        }
+        .whatsapp-mini-fab.show {
+            display: flex;
+        }
+
+        /* ===== MAPA DE LOCALIZAÇÕES ===== */
+        .fake-map{position:relative;width:100%;height:220px;background:#1a2332;border-radius:10px;overflow:hidden;margin:12px 0;}
+        .fake-map-grid{position:absolute;top:0;left:0;width:100%;height:100%;opacity:.15;}
+        .fake-map-grid .h-line{position:absolute;left:0;right:0;height:1px;background:#4a6a8a;}
+        .fake-map-grid .v-line{position:absolute;top:0;bottom:0;width:1px;background:#4a6a8a;}
+        .fake-map-road{position:absolute;background:#2a3a4a;border-radius:2px;}
+        .fake-map-pin{position:absolute;z-index:5;display:flex;align-items:center;justify-content:center;}
+        .fake-map-pin svg{width:48px;height:48px;fill:#e74c3c;filter:drop-shadow(0 2px 4px rgba(0,0,0,.4));animation:pinBounce 1.5s ease-in-out infinite;}
+        .fake-map-pin::before{content:'';position:absolute;top:50%;left:50%;width:10px;height:10px;border:2px solid rgba(231,76,60,.5);border-radius:50%;transform:translate(-50%,-50%);animation:pinWave 2s ease-out infinite;}
+        .fake-map-pin::after{content:'';position:absolute;top:50%;left:50%;width:10px;height:10px;border:2px solid rgba(231,76,60,.3);border-radius:50%;transform:translate(-50%,-50%);animation:pinWave 2s ease-out infinite .6s;}
+        @keyframes pinBounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+        @keyframes pinWave{0%{width:10px;height:10px;opacity:.8;}100%{width:100px;height:100px;opacity:0;}}
+        .fake-map::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(26,35,50,.4);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);z-index:6;}
+        .fake-map-cta{position:absolute;bottom:0;left:0;right:0;z-index:10;padding:0;}.fake-map-cta .btn-cta-green{margin:0!important;border-radius:0 0 10px 10px!important;display:block;}
+
+        /* ===== MODAL DE URGÊNCIA ===== */
+        .urgency-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.3);z-index:99999;display:none;align-items:center;justify-content:center;padding:16px;}
+        .urgency-overlay.show{display:flex;}
+        .urgency-box{background:#fff;border-radius:16px;max-width:380px;width:100%;overflow:hidden;animation:urgencyPop .3s ease;}
+        @keyframes urgencyPop{from{transform:scale(.8);opacity:0;}to{transform:scale(1);opacity:1;}}
+        .urgency-header{background:#e74c3c;padding:16px;text-align:center;}
+        .urgency-header svg{width:40px;height:40px;fill:#fff;margin-bottom:8px;}
+        .urgency-header h3{color:#fff;font-size:17px;font-weight:700;margin:0;}
+        .urgency-body{padding:20px 16px;text-align:center;}
+        .urgency-body p{font-size:14px;color:#333;line-height:1.5;margin-bottom:16px;}
+        .urgency-body strong{color:#e74c3c;}
+        .urgency-images{display:flex;gap:6px;justify-content:center;}
+        .urgency-images-block{background:#1a1a2e;border-radius:12px;padding:12px;margin-bottom:18px;}
+        .urgency-images-label{color:#ff6b6b;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
+        .urgency-images img{width:80px;height:80px;object-fit:cover;border-radius:8px;border:2px solid #e74c3c;filter:blur(2px);-webkit-touch-callout:none;pointer-events:none;}
+        .urgency-cta{display:block;width:100%;padding:16px;background:#25D366;color:#fff;font-size:17px;font-weight:700;border:none;border-radius:10px;cursor:pointer;text-transform:uppercase;letter-spacing:.5px;animation:urgencyPulse 1.5s infinite;text-decoration:none;text-align:center;}
+        @keyframes urgencyPulse{0%,100%{box-shadow:0 0 0 0 rgba(37,211,102,.5);}70%{box-shadow:0 0 0 14px rgba(37,211,102,0);}}
+        .urgency-timer{display:inline-block;background:#e74c3c;color:#fff;padding:2px 10px;border-radius:20px;font-size:13px;font-weight:700;margin-bottom:10px;}
+
+        .contact-preview{display:inline-flex;align-items:center;gap:3px;background:#ffe0e0;color:#d32f2f;font-size:10px;font-weight:600;padding:2px 6px;border-radius:3px;margin-top:2px;line-height:1.2;max-width:100%;overflow:hidden;white-space:nowrap;}
+        .contact-preview svg{width:10px;height:10px;fill:#d32f2f;flex-shrink:0;}
+
+        /* ===== 4. CTAs VERDES PULSANTES ===== */
+        @keyframes pulseGreen {
+            0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.5); }
+            70% { box-shadow: 0 0 0 12px rgba(37, 211, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+        }
+
+        .btn-cta-green {
+            display: block;
+            width: 100%;
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            color: #fff;
+            border: none;
+            border-radius: 30px;
+            padding: 14px 20px;
+            font-size: 14px;
+            font-weight: 700;
+            text-align: center;
+            cursor: pointer;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            animation: pulseGreen 2s infinite;
+            transition: all 0.3s ease;
+            margin: 10px 0;
+        }
+        .btn-cta-green:hover {
+            transform: translateY(-2px);
+            color: #fff;
+        }
+        .btn-cta-green i {
+            margin-right: 8px;
+        }
+
+        /* ===== 5. PLAYER DE ÁUDIO FALSO ===== */
+        .audio-player-fake {
+            background: var(--light-green);
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .audio-player-fake .audio-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .audio-player-fake .audio-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: blur(4px);
+        }
+        .audio-player-fake .audio-play-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--primary-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            border: none;
+        }
+        .audio-player-fake .audio-play-btn svg {
+            width: 14px;
+            height: 14px;
+            fill: #fff;
+        }
+        .audio-player-fake .audio-waveform-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .audio-player-fake .waveform-bars {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            height: 24px;
+        }
+        .audio-player-fake .waveform-bars .bar {
+            width: 3px;
+            background: #8696a0;
+            border-radius: 2px;
+            transition: background 0.1s;
+        }
+        .audio-player-fake .waveform-bars .bar.played {
+            background: var(--primary-green);
+        }
+        .audio-player-fake .audio-time {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+        .audio-player-fake .audio-progress {
+            width: 100%;
+            height: 3px;
+            background: #ccc;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .audio-player-fake .audio-progress-fill {
+            height: 100%;
+            background: var(--primary-green);
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        /* ===== MODAL DE ÁUDIO BLOQUEADO ===== */
+        .audio-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+        .audio-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .audio-modal-box {
+            background: #fff;
+            border-radius: 16px;
+            padding: 30px 24px;
+            text-align: center;
+            max-width: 320px;
+            width: 90%;
+        }
+        .audio-modal-box .modal-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #fff3e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+        .audio-modal-box .modal-icon i {
+            font-size: 22px;
+            color: #ff9800;
+        }
+        .audio-modal-box h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+        .audio-modal-box p {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+        .audio-modal-box .btn-cta-green {
+            font-size: 13px;
+            padding: 12px 16px;
+        }
+        .audio-modal-box .btn-close-modal {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 12px;
+            cursor: pointer;
+            margin-top: 10px;
+            display: block;
+            width: 100%;
+        }
+    </style>
+    <!-- Meta Pixel + Utmify -->
+    <script src="/tracking/pixels.js"></script>
+</head>
+
+<body>
+
+<header class="header">
+        <h1>Relatório de Acesso ao WhatsApp</h1>
+        <p>Os dados abaixo são confidenciais e protegidos por criptografia ponta-a-ponta.</p>
+    </header>
+
+    <!-- Selo Relatório Verificado -->
+    <div style="max-width:600px;margin:10px auto;padding:8px 16px;background:#e8f5e9;border:1px solid #25D366;border-radius:8px;display:flex;align-items:center;gap:8px;justify-content:center;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#0095F6"></circle><path d="M9.5 15.5L6 12l-1 1 4.5 4.5 9-9-1-1z" fill="#fff"></path></svg>
+        <span style="font-size:13px;color:#2e7d32;font-weight:600;">Relatório autenticado em <span id="dataVerificado"></span></span>
+    </div>
+    <script>
+        var dv=document.getElementById('dataVerificado');
+        if(dv)dv.textContent=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
+    </script>
+
+    <!-- Resumo da Análise -->
+    <div style="max-width:600px;margin:12px auto;padding:16px;background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.08);">
+        <div style="text-align:center;font-size:14px;font-weight:700;color:#333;margin-bottom:12px;">Resumo da Análise</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;align-items:center;gap:12px;background:#fff8f8;border-radius:8px;padding:10px 14px;border:1px solid #fde0e0;">
+                <span style="font-size:20px;">💬</span>
+                <span style="flex:1;font-size:13px;color:#333;">Mensagens Suspeitas</span>
+                <span style="font-size:16px;font-weight:800;color:#e74c3c;" id="resumoMsg">--</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;background:#fff8f8;border-radius:8px;padding:10px 14px;border:1px solid #fde0e0;">
+                <span style="font-size:20px;">📷</span>
+                <span style="flex:1;font-size:13px;color:#333;">Fotos Suspeitas</span>
+                <span style="font-size:16px;font-weight:800;color:#e74c3c;" id="resumoImg">--</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;background:#fff8f8;border-radius:8px;padding:10px 14px;border:1px solid #fde0e0;">
+                <span style="font-size:20px;">🎤</span>
+                <span style="flex:1;font-size:13px;color:#333;">Áudios Recuperados</span>
+                <span style="font-size:16px;font-weight:800;color:#e74c3c;" id="resumoAud">--</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;background:#fff8f8;border-radius:8px;padding:10px 14px;border:1px solid #fde0e0;">
+                <span style="font-size:20px;">📍</span>
+                <span style="flex:1;font-size:13px;color:#333;">Localizações Suspeitas</span>
+                <span style="font-size:16px;font-weight:800;color:#e74c3c;" id="resumoLoc">--</span>
+            </div>
+        </div>
+    </div>
+    <script>
+    (function(){
+        function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+        var n;
+        try{n=JSON.parse(localStorage.getItem('vsl_numeros'));}catch(e){}
+        if(!n)n={mensagens:148,imagens:35,localizacoes:2};
+        var audios=12;
+        document.getElementById('resumoMsg').textContent=n.mensagens;
+        document.getElementById('resumoImg').textContent=n.imagens;
+        document.getElementById('resumoAud').textContent=audios;
+        document.getElementById('resumoLoc').textContent=n.localizacoes;
+        document.querySelectorAll('.vsl-mensagens').forEach(function(el){el.textContent=n.mensagens;});
+        var locEl=document.getElementById('location_number');if(locEl)locEl.textContent=n.localizacoes;
+    })();
+    </script>
+
+    <main class="main-content">
+        <div class="container-custom mx-auto my-4">
+            <div class="card">
+
+                <!-- Conversation Analysis Block -->
+                <div class="card" id="conversationCard">
+                    <div class="card-title">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"></path>
+                        </svg>
+                        Análise de Conversas
+                    </div>
+                    <div class="card-content">
+                        <p><span class="highlight"><span class="vsl-mensagens">148</span> conversas suspeitas</span> foram encontradas durante a análise. O sistema conseguiu recuperar <span class="warning">mensagens apagadas</span> e algumas foram classificadas como <span class="highlight">críticas</span> com base no conteúdo.</p>
+                    </div>
+                    <div class="conversation-block" id="contactList">
+                        <div style="background:#f0f4f8;padding:10px 12px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #e0e0e0;">
+                            <span style="font-size:14px;">💬</span>
+                            <span style="font-size:0.8rem;color:#667781;">Toque em uma conversa abaixo para visualizar os detalhes.</span>
+                        </div>
+                        <!-- Contatos serão gerados dinamicamente pelo JS -->
+                    </div>
+                </div>
+
+                <div style="position: relative;">
+                    <span class="ddd">+55
+                        <span id="ddd">48</span>
+                        <span class="text-blur">9**-****</span>
+                    </span>
+                    <img src="images/fundocheck.png" alt="" class="img-fluid">
+                </div>
+
+                <a class="cta_link btn-cta-green" href="/checkout">
+                    <i class="fas fa-lock"></i> DESBLOQUEAR ACESSO COMPLETO
+                </a>
+
+                <div class="divider mt-4 mb-4"></div>
+
+                <p class="text-center"><b>conversas apagadas</b> foram marcadas como <b>Suspeitas</b>.</p>
+
+                <div class="divider mt-4 mb-4"></div>
+
+                <div>
+                    <img class="img-fluid" src="images/etapafinal002.png">
+                </div>
+
+                <div class="divider mt-4 mb-4"></div>
+
+                <p class="text-center"><b>58</b> fotos apagadas.</p>
+
+                <div>
+                    <img class="img-fluid" src="images/homem-fotos.jpeg">
+                </div>
+
+                <div class="divider mt-4 mb-4"></div>
+
+                <!-- ===== 5. PLAYER DE ÁUDIO FALSO ===== -->
+                <p class="text-center" style="margin-bottom: 15px;"><b>4 áudios</b> comprometedores encontrados...</p>
+
+                <div class="audio-player-fake" data-duration="0:47">
+                    <div class="audio-avatar"><img src="images/pm01.jpg" alt=""></div>
+                    <button class="audio-play-btn" onclick="playFakeAudio(this)">
+                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
+                    </button>
+                    <div class="audio-waveform-container">
+                        <div class="waveform-bars" id="waveform1"></div>
+                        <div class="audio-progress"><div class="audio-progress-fill"></div></div>
+                        <span class="audio-time">0:47</span>
+                    </div>
+                </div>
+
+                <div class="audio-player-fake" data-duration="1:23">
+                    <div class="audio-avatar"><img src="images/pm02.jpg" alt=""></div>
+                    <button class="audio-play-btn" onclick="playFakeAudio(this)">
+                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
+                    </button>
+                    <div class="audio-waveform-container">
+                        <div class="waveform-bars" id="waveform2"></div>
+                        <div class="audio-progress"><div class="audio-progress-fill"></div></div>
+                        <span class="audio-time">1:23</span>
+                    </div>
+                </div>
+
+                <div class="audio-player-fake" data-duration="0:15">
+                    <div class="audio-avatar"><img src="images/pm01.jpg" alt=""></div>
+                    <button class="audio-play-btn" onclick="playFakeAudio(this)">
+                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
+                    </button>
+                    <div class="audio-waveform-container">
+                        <div class="waveform-bars" id="waveform3"></div>
+                        <div class="audio-progress"><div class="audio-progress-fill"></div></div>
+                        <span class="audio-time">0:15</span>
+                    </div>
+                </div>
+
+                <div class="audio-player-fake" data-duration="2:05">
+                    <div class="audio-avatar"><img src="images/pm03.jpg" alt=""></div>
+                    <button class="audio-play-btn" onclick="playFakeAudio(this)">
+                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
+                    </button>
+                    <div class="audio-waveform-container">
+                        <div class="waveform-bars" id="waveform4"></div>
+                        <div class="audio-progress"><div class="audio-progress-fill"></div></div>
+                        <span class="audio-time">2:05</span>
+                    </div>
+                </div>
+
+                <div class="divider mt-4 mb-4"></div>
+
+                <a class="cta_link btn-cta-green" href="/checkout">
+                    <i class="fas fa-headphones"></i> OUVIR ÁUDIOS COMPLETOS
+                </a>
+
+                <div class="divider mt-4 mb-4"></div>
+
+                <div class="card-body">
+                    <div class="card-content">
+                        <p>O sistema escaneou <span class="highlight">4.327 mensagens</span> e identificou várias palavras-chave que podem indicar comportamento suspeito.</p>
+                        <div class="keyword-list">
+                            <div class="keyword-item">
+                                <div class="keyword-text">"Gostosa"</div>
+                                <div class="keyword-count">13</div>
+                            </div>
+                            <div class="keyword-item">
+                                <div class="keyword-text">"Amor"</div>
+                                <div class="keyword-count">9</div>
+                            </div>
+                            <div class="keyword-item">
+                                <div class="keyword-text">"Segredo"</div>
+                                <div class="keyword-count">8</div>
+                            </div>
+                            <div class="keyword-item">
+                                <div class="keyword-text">"Escondido"</div>
+                                <div class="keyword-count">6</div>
+                            </div>
+                            <div class="keyword-item">
+                                <div class="keyword-text">"Não conta"</div>
+                                <div class="keyword-count">5</div>
+                            </div>
+                        </div>
+                        <a class="cta_link btn-cta-green" href="/checkout">
+                            <i class="fas fa-lock"></i> VER TODAS AS MENSAGENS
+                        </a>
+                    </div>
+
+                    <div class="divider mt-4 mb-4"></div>
+
+                    <p class="text-center"><mark style="color: red;"><b><span id="location_number">2</span> Localização Suspeitas</b></mark> encontradas nos últimos 14 dias perto de Moteis, Casas de Massagem e Pontos de Prostituição</p>
+
+                    <div class="fake-map">
+                        <div class="fake-map-grid">
+                            <div class="h-line" style="top:20%"></div>
+                            <div class="h-line" style="top:40%"></div>
+                            <div class="h-line" style="top:60%"></div>
+                            <div class="h-line" style="top:80%"></div>
+                            <div class="v-line" style="left:15%"></div>
+                            <div class="v-line" style="left:35%"></div>
+                            <div class="v-line" style="left:55%"></div>
+                            <div class="v-line" style="left:75%"></div>
+                            <div class="v-line" style="left:90%"></div>
+                        </div>
+                        <div class="fake-map-road" style="top:38%;left:0;right:30%;height:3px;"></div>
+                        <div class="fake-map-road" style="top:18%;left:33%;bottom:40%;width:3px;"></div>
+                        <div class="fake-map-road" style="top:58%;left:20%;right:0;height:3px;"></div>
+                        <div class="fake-map-road" style="top:10%;left:70%;bottom:20%;width:3px;"></div>
+                        <div class="fake-map-road" style="top:75%;left:40%;right:15%;height:3px;"></div>
+                        <div class="fake-map-pin" style="top:25%;left:45%;"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"></path></svg></div>
+                        <div class="fake-map-cta">
+                            <a class="cta_link btn-cta-green" href="/checkout" style="margin:0;border-radius:0 0 10px 10px;">
+                                <i class="fas fa-map-marker-alt"></i> VER LOCALIZAÇÕES SUSPEITAS
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Popups -->
+        <div class="popup-overlay" id="chatPopup1">
+            <div class="popup-content">
+                <div class="popup-header">
+                    <button class="popup-close">�</button>
+                    <div class="popup-avatar"><img src="images/pm01.jpg" alt=""></div>
+                    <div class="popup-name">+55 <span class="ddd-dynamic">48</span> 9XXXX-<span class="suffix-dynamic" data-idx="0">8392</span></div>
+                </div>
+                <div class="popup-body">
+                    <div class="chat-message received">
+                        Oi, tudo bem?
+                        <div class="message-time">14:22</div>
+                    </div>
+                    <div class="chat-message sent">
+                        Tudo sim e você?
+                        <div class="message-time">14:23
+                            <span class="message-status"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z"></path></svg></span>
+                        </div>
+                    </div>
+                    <div class="chat-message received">
+                        <span class="highlight">Conteúdo bloqueado</span>
+                        <div class="message-time">14:25</div>
+                    </div>
+                    <div class="chat-message sent">
+                        <span class="highlight">Conteúdo bloqueado</span>
+                        <div class="message-time">14:26
+                            <span class="message-status"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z"></path></svg></span>
+                        </div>
+                    </div>
+                    <div class="chat-message received">
+                        <span class="highlight">Conteúdo bloqueado</span>
+                        <div class="message-time">14:28</div>
+                    </div>
+                    <div class="chat-message received">
+                        <span class="highlight">Conteúdo bloqueado</span>
+                        <div class="message-time">14:30</div>
+                    </div>
+                    <div class="chat-message sent">
+                        <span class="highlight">Conteúdo bloqueado</span>
+                        <div class="message-time">14:32
+                            <span class="message-status"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z"></path></svg></span>
+                        </div>
+                    </div>
+                    <div class="chat-message received">
+                        <span class="highlight">Conteúdo bloqueado</span>
+                        <div class="message-time">14:33</div>
+                    </div>
+                    <div class="chat-message received">
+                        <span class="highlight">Conteúdo bloqueado</span>
+                        <div class="message-time">14:35</div>
+                    </div>
+                </div>
+                <div class="chat-footer">
+                    <div class="chat-lock-message">Para visualizar a conversa completa, você precisa desbloquear as conversas.</div>
+                    <a class="cta_link btn-cta-green" href="/checkout">
+                        <i class="fas fa-lock"></i> DESBLOQUEAR CONVERSAS COMPLETAS
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="popup-overlay" id="chatPopup2">
+            <div class="popup-content">
+                <div class="popup-header">
+                    <button class="popup-close">�</button>
+                    <div class="popup-avatar"><img src="images/pm02.jpg" alt=""></div>
+                    <div class="popup-name">+55 <span class="ddd-dynamic">48</span> 9XXXX-<span class="suffix-dynamic" data-idx="1">7381</span></div>
+                </div>
+                <div class="popup-body">
+                    <div class="chat-message received">
+                        Eiiii
+                        <div class="message-time">09:15</div>
+                    </div>
+                    <div class="chat-message sent">
+                        to aqui amor
+                        <div class="message-time">09:17
+                            <span class="message-status"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z"></path></svg></span>
+                        </div>
+                    </div>
+                    <div class="chat-message received">
+                        <span class="highlight">Conteúdo bloqueado</span>
+                        <div class="message-time">09:20</div>
+                    </div>
+                    <div class="chat-message sent">
+                        <span class="highlight">Conteúdo bloqueado</span>
+                        <div class="message-time">09:22
+                            <span class="message-status"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z"></path></svg></span>
+                        </div>
+                    </div>
+                    <div class="chat-message received">
+                        <span class="highlight">Conteúdo bloqueado</span>
+                        <div class="message-time">09:25</div>
+                    </div>
+                    <div class="chat-message received">
+                        <span class="highlight">Conteúdo bloqueado</span>
+                        <div class="message-time">09:26</div>
+                    </div>
+                    <div class="chat-message sent">
+                        <span class="highlight">Conteúdo bloqueado</span>
+                        <div class="message-time">09:30
+                            <span class="message-status"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z"></path></svg></span>
+                        </div>
+                    </div>
+                    <div class="chat-message received">
+                        <span class="highlight">Conteúdo bloqueado</span>
+                        <div class="message-time">09:32</div>
+                    </div>
+                    <div class="chat-message received">
+                        <span class="highlight">Conteúdo bloqueado</span>
+                        <div class="message-time">09:35</div>
+                    </div>
+                </div>
+                <div class="chat-footer">
+                    <div class="chat-lock-message">Para visualizar a conversa completa, você precisa desbloquear as conversas.</div>
+                    <a class="cta_link btn-cta-green" href="/checkout">
+                        <i class="fas fa-lock"></i> DESBLOQUEAR CONVERSAS COMPLETAS
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="popup-overlay" id="chatPopup3">
+            <div class="popup-content">
+                <div class="popup-header">
+                    <button class="popup-close">�</button>
+                    <div class="popup-avatar"><img src="images/pm03.jpg" alt=""></div>
+                    <div class="popup-name">+55 <span class="ddd-dynamic">48</span> 9XXXX-<span class="suffix-dynamic" data-idx="2">0032</span></div>
+                </div>
+                <div class="popup-body">
+                    <div class="chat-message received">
+                        Cadê você não vai me mandar?
+                        <div class="message-time">20:05</div>
+                    </div>
+                    <div class="chat-message sent">
+                        Claro, rsrsrs 😏
+                        <div class="message-time">20:07
+                            <span class="message-status"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z"></path></svg></span>
+                        </div>
+                    </div>
+                    <div class="chat-message received">
+                        <span class="highlight">Conteúdo bloqueado</span>
+                        <div class="message-time">20:10</div>
+                    </div>
+                    <div class="chat-message received">
+                        <span class="highlight">Imagem bloqueada</span>
+                        <div class="message-time">20:12</div>
+                    </div>
+                    <div class="chat-message sent">
+                        <span class="highlight">Conteúdo bloqueado</span>
+                        <div class="message-time">20:15
+                            <span class="message-status"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z"></path></svg></span>
+                        </div>
+                    </div>
+                    <div class="chat-message received">
+                        <span class="highlight">Conteúdo bloqueado</span>
+                        <div class="message-time">20:16</div>
+                    </div>
+                    <div class="chat-message received">
+                        <span class="highlight">Imagem bloqueada</span>
+                        <div class="message-time">20:18</div>
+                    </div>
+                    <div class="chat-message received">
+                        <span class="highlight">Esta mensagem foi apagada</span>
+                        <div class="message-time">20:20</div>
+                    </div>
+                    <div class="chat-message sent">
+                        <span class="highlight">Conteúdo bloqueado</span>
+                        <div class="message-time">20:25
+                            <span class="message-status"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z"></path></svg></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-footer">
+                    <div class="chat-lock-message">Para visualizar a conversa completa, você precisa desbloquear as conversas.</div>
+                    <a class="cta_link btn-cta-green" href="/checkout">
+                        <i class="fas fa-lock"></i> DESBLOQUEAR CONVERSAS COMPLETAS
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center mt-4">
+        <p>Ferramenta Atualizada:<br> <b class="descounttime">-</b></p>
+        <img src="images/selo.png" width="140">
+        <p>� 2024 EspiaZap. Todos os direitos reservados.</p>
+        <p style="font-size: 13px;"><br>
+            <a href="/lp/index.html" style="color: black;">Termos de Uso</a><br>
+            <a href="/lp/index.html" style="color: black;">Política de Privacidade</a>
+        </p>
+    </footer>
+
+    <!-- Modal de Áudio Bloqueado -->
+    <div class="audio-modal-overlay" id="audioModal">
+        <div class="audio-modal-box">
+            <div class="modal-icon"><i class="fas fa-lock"></i></div>
+            <h3>Áudio Criptografado</h3>
+            <p>Libere o Acesso VIP para ouvir a gravação completa deste áudio.</p>
+            <a class="cta_link btn-cta-green" href="/checkout">
+                <i class="fas fa-lock-open"></i> LIBERAR ACESSO VIP
+            </a>
+            <button class="btn-close-modal" onclick="document.getElementById('audioModal').classList.remove('active')">Fechar</button>
+        </div>
+    </div>
+
+    <!-- Toast WhatsApp (opcional) -->
+    <div id="whatsappToast" class="whatsapp-toast">
+        <button class="whatsapp-toast-close" onclick="closeWhatsappToast()">�</button>
+        <div class="whatsapp-toast-content">
+            <img src="images/whatsapp-logo.png" alt="WhatsApp" class="whatsapp-logo">
+            <div>
+                <div style="font-size: 18px; font-weight: bold;">WhatsApp Desbloqueado!</div>
+            </div>
+        </div>
+        <div class="whatsapp-description">
+            Acesse as mensagens dele dentro do WhatsApp
+        </div>
+        <button class="whatsapp-button" onclick="window.location.href='/whatsapp/index.html'">
+            Acessar WhatsApp
+        </button>
+    </div>
+    <a id="whatsappMiniFab" class="whatsapp-mini-fab cta_link" href="/whatsapp/index.html">
+        <img src="images/whatsapp-logo.png" alt=""> Monitorar WhatsApp
+    </a>
+    <script>
+        function closeWhatsappToast() {
+            document.getElementById('whatsappToast').classList.remove('show');
+            setTimeout(function() { document.getElementById('whatsappMiniFab').classList.add('show'); }, 500);
+        }
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                document.getElementById('whatsappToast').classList.add('show');
+                setTimeout(() => { closeWhatsappToast(); }, 5000);
+            }, 2000);
+        });
+    </script>
+
+    <!-- Modal de Urgência -->
+    <div class="urgency-overlay" id="urgencyModal">
+        <div class="urgency-box">
+            <div class="urgency-header">
+                <svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"></path></svg>
+                <h3>ACESSO EXPIRANDO</h3>
+            </div>
+            <div class="urgency-body">
+                <div class="urgency-timer" id="urgencyTimer">Expira em 04:59</div>
+                <p><strong>Conteúdo suspeito detectado!</strong><br>Foram encontradas conversas, fotos e áudios comprometedores no WhatsApp. Libere agora antes que o acesso expire.</p>
+                <div class="urgency-images-block">
+                    <div class="urgency-images-label">Imagens Apagadas Suspeitas</div>
+                    <div class="urgency-images">
+                        <img src="images/urgency-1.jpg" alt="" onerror="this.style.background='#ddd'">
+                        <img src="images/urgency-2.jpg" alt="" onerror="this.style.background='#ddd'">
+                        <img src="images/urgency-3.jpg" alt="" onerror="this.style.background='#ddd'">
+                    </div>
+                </div>
+                <a class="cta_link urgency-cta" href="/checkout">LIBERAR ACESSO COMPLETO — R$ 38,97</a>
+                <button onclick="document.getElementById('urgencyModal').classList.remove('show');document.body.style.overflow='';" style="display:block;width:100%;margin-top:12px;background:#e74c3c;color:#fff;border:none;padding:12px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;">Continuar vendo a prévia do WhatsApp</button>
+            </div>
+        </div>
+    </div>
+    <script>
+    (function(){
+        function showUrgency(){
+            var modal=document.getElementById('urgencyModal');
+            if(!modal)return;
+            modal.classList.add('show');
+            document.body.style.overflow='hidden';
+            var totalSec=299;
+            var timerEl=document.getElementById('urgencyTimer');
+            if(timerEl){
+                var countdown=setInterval(function(){
+                    totalSec--;
+                    var m=Math.floor(totalSec/60);
+                    var s=totalSec%60;
+                    timerEl.textContent='Expira em '+(m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+                    if(totalSec<=0)clearInterval(countdown);
+                },1000);
+            }
+        }
+        setTimeout(function(){
+            showUrgency();
+            setInterval(function(){
+                if(!document.getElementById('urgencyModal').classList.contains('show')){
+                    showUrgency();
+                }
+            },50000);
+        },35000);
+    })();
+    </script>
+
+    <!-- Toast de Escassez -->
+    <div class="scarcity-toast" id="scarcityToast">
+        <div class="toast-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path></svg>
+        </div>
+        <div class="toast-text" id="scarcityText"></div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.cookie.min.js"></script>
+    <script src="js/jquery.mask.min.js"></script>
+
+    <script>
+        // Data atualização
+        var getdayNames = ["Domingo","Segunda-Feira","Terça-Feira","Quarta-Feira","Quinta-Feira","Sexta-Feira","Sábado"];
+        var getdayMonth = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+        var getNow = new Date();
+        var value = getdayNames[getNow.getDay()] + ", " + getNow.getDate() + " de " + getdayMonth[getNow.getMonth()] + " de " + getNow.getFullYear();
+        $(".descounttime").html(value);
+    </script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+        // ===== 1. TIMER DE EXPIRAÇÃO (removido) =====
+
+        // ===== 2. TOASTS DE ESCASSEZ =====
+        var scarcityMessages = [
+            'Mais <strong>3 arquivos ocultos</strong> acabaram de ser descriptografados...',
+            'Nova <strong>localização suspeita</strong> encontrada nos registros...',
+            '<strong>2 áudios apagados</strong> foram recuperados com sucesso...',
+            'Análise detectou <strong>5 novas mensagens</strong> com palavras-chave suspeitas...',
+            '<strong>Imagens apagadas</strong> estão sendo restauradas pelo sistema...',
+            'O sistema encontrou <strong>1 novo contato</strong> com interações frequentes...',
+            '<strong>Conversas do Telegram</strong> também foram detectadas no dispositivo...',
+            'Mais <strong>4 fotos</strong> foram encontradas na lixeira do dispositivo...'
+        ];
+        var scarcityIdx = 0;
+        var toastEl = document.getElementById('scarcityToast');
+        var toastText = document.getElementById('scarcityText');
+        function showScarcityToast() {
+            toastText.innerHTML = scarcityMessages[scarcityIdx % scarcityMessages.length];
+            scarcityIdx++;
+            toastEl.classList.add('show');
+            setTimeout(function() { toastEl.classList.remove('show'); }, 4000);
+        }
+        setTimeout(showScarcityToast, 8000);
+        setInterval(showScarcityToast, 14000);
+
+        // ===== 5. WAVEFORM GENERATION =====
+        for (var w = 1; w <= 4; w++) {
+            var container = document.getElementById('waveform' + w);
+            if (container) {
+                for (var b = 0; b < 35; b++) {
+                    var bar = document.createElement('div');
+                    bar.className = 'bar';
+                    var h = Math.floor(Math.random() * 18) + 4;
+                    bar.style.height = h + 'px';
+                    container.appendChild(bar);
+                }
+            }
+        }
+
+        // ===== 6. GERAÇÃO DINÂMICA DE NÚMEROS =====
+        var ddd = localStorage.getItem('ddd') || '48';
+        // Update all DDD spans
+        document.querySelectorAll('#ddd, .ddd-dynamic').forEach(function(el) {
+            el.textContent = ddd;
+        });
+
+        var SUFFIX_KEY = 'phone_suffixes';
+        var suffixes = sessionStorage.getItem(SUFFIX_KEY);
+        if (!suffixes) {
+            var arr = [];
+            for (var s = 0; s < 3; s++) {
+                arr.push(String(Math.floor(1000 + Math.random() * 9000)));
+            }
+            suffixes = JSON.stringify(arr);
+            sessionStorage.setItem(SUFFIX_KEY, suffixes);
+        }
+        var suffixArr = JSON.parse(suffixes);
+        document.querySelectorAll('.suffix-dynamic').forEach(function(el) {
+            var idx = parseInt(el.getAttribute('data-idx')) || 0;
+            if (suffixArr[idx]) el.textContent = suffixArr[idx];
+        });
+
+        // ===== GERAR LISTA DE CONTATOS DINAMICAMENTE =====
+        var contactData = [
+            { img: './images/pm01.jpg', preview: 'Conteúdo suspeito detectado', popup: 1 },
+            { img: './images/pm02.jpg', preview: 'Mensagens apagadas recuperadas', popup: 2 },
+            { img: './images/pm03.jpg', preview: 'Imagens suspeitas encontradas', popup: 3 }
+        ];
+        var contactList = document.getElementById('contactList');
+        if (contactList) {
+            contactData.forEach(function(c, i) {
+                var num = '+55 ' + ddd + ' 9XXXX-' + (suffixArr[i] || '0000');
+                var btn = document.createElement('button');
+                btn.className = 'contact-button';
+                if (c.popup > 0) {
+                    btn.setAttribute('data-contact', c.popup);
+                } else {
+                    btn.setAttribute('onclick', "document.querySelector('.cta_link').click()");
+                }
+                btn.innerHTML =
+                    '<div class="contact-avatar"><img src="' + c.img + '" alt=""></div>' +
+                    '<div class="contact-info" style="margin-left:12px;">' +
+                        '<div class="contact-name">' + num + '</div>' +
+                        '<div class="contact-preview"><svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>' + c.preview + '</div>' +
+                    '</div>' +
+                    '<div class="contact-time">--</div>';
+                contactList.appendChild(btn);
+            });
+        }
+
+        // ===== POPUP OPEN/CLOSE =====
+        document.querySelectorAll('.contact-button[data-contact]').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var id = this.getAttribute('data-contact');
+                var popup = document.getElementById('chatPopup' + id);
+                if (popup) popup.classList.add('active');
+            });
+        });
+        document.querySelectorAll('.popup-close').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var popup = this.closest('.popup-overlay');
+                if (popup) popup.classList.remove('active');
+            });
+        });
+        document.querySelectorAll('.popup-overlay').forEach(function(popup) {
+            popup.addEventListener('click', function(e) {
+                if (e.target === this) this.classList.remove('active');
+            });
+        });
+
+        // ===== CARD VISIBILITY ON SCROLL =====
+        var cards = document.querySelectorAll('.card');
+        function checkVisibility() {
+            cards.forEach(function(card) {
+                var rect = card.getBoundingClientRect();
+                if (rect.top <= window.innerHeight * 0.85) {
+                    card.classList.add('visible');
+                }
+            });
+        }
+        setTimeout(checkVisibility, 300);
+        window.addEventListener('scroll', checkVisibility);
+
+    }); // end DOMContentLoaded
+    </script>
+
+    <!-- ===== 5. PLAYER DE ÁUDIO FALSO - SCRIPT ===== -->
+    <script>
+    function playFakeAudio(btn) {
+        var player = btn.closest('.audio-player-fake');
+        var progressFill = player.querySelector('.audio-progress-fill');
+        var bars = player.querySelectorAll('.waveform-bars .bar');
+        var totalBars = bars.length;
+        var playedCount = 0;
+        var maxPlayed = Math.floor(totalBars * 0.15);
+
+        // Reset
+        progressFill.style.width = '0%';
+        bars.forEach(function(b) { b.classList.remove('played'); });
+
+        // Change button to pause icon
+        btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
+
+        var interval = setInterval(function() {
+            playedCount++;
+            var pct = (playedCount / totalBars) * 100;
+            progressFill.style.width = pct + '%';
+            if (playedCount <= totalBars) bars[playedCount - 1].classList.add('played');
+
+            if (playedCount >= maxPlayed) {
+                clearInterval(interval);
+                // Reset button to play
+                btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+                // Show modal
+                document.getElementById('audioModal').classList.add('active');
+            }
+        }, 100);
+    }
+    </script>
+
+    <!-- ===== UTM TRACKER SYSTEM ===== -->
+    <script>
+        $(document).ready(function () {
+            console.log('Iniciando captura de UTMs na pagina marido/esposa');
+
+            function getUTMsFromURL() {
+                var urlParams = new URLSearchParams(window.location.search);
+                var utmParams = {};
+                ['utm_source','utm_medium','utm_campaign','utm_term','utm_content','src','gclid','wbraid','gbraid','keyword','device','network'].forEach(function(param) {
+                    if (urlParams.has(param)) utmParams[param] = urlParams.get(param);
+                });
+                return utmParams;
+            }
+
+            function getUTMsFromStorage() {
+                try {
+                    var stored = localStorage.getItem('utmParams');
+                    return stored ? JSON.parse(stored) : {};
+                } catch(e) { return {}; }
+            }
+
+            function getUTMsFromCookies() {
+                var utmParams = {};
+                ['utm_source','utm_medium','utm_campaign','utm_term','utm_content','src','gclid','wbraid','gbraid','keyword','device','network'].forEach(function(param) {
+                    var val = $.cookie(param);
+                    if (val) utmParams[param] = val;
+                });
+                return utmParams;
+            }
+
+            function saveUTMs(utmParams) {
+                if (Object.keys(utmParams).length > 0) {
+                    try { localStorage.setItem('utmParams', JSON.stringify(utmParams)); } catch(e) {}
+                    Object.keys(utmParams).forEach(function(p) {
+                        $.cookie(p, utmParams[p], { expires: 30, path: '/' });
+                    });
+                }
+            }
+
+            function captureAllUTMs() {
+                var finalUTMs = {};
+                var urlUTMs = getUTMsFromURL();
+                if (Object.keys(urlUTMs).length > 0) finalUTMs = urlUTMs;
+                if (Object.keys(finalUTMs).length === 0) {
+                    var storageUTMs = getUTMsFromStorage();
+                    if (Object.keys(storageUTMs).length > 0) finalUTMs = storageUTMs;
+                }
+                if (Object.keys(finalUTMs).length === 0) {
+                    var cookieUTMs = getUTMsFromCookies();
+                    if (Object.keys(cookieUTMs).length > 0) finalUTMs = cookieUTMs;
+                }
+                if (Object.keys(finalUTMs).length > 0) saveUTMs(finalUTMs);
+                return finalUTMs;
+            }
+
+            function addUTMsToUrl(url, utmParams) {
+                try {
+                    if (Object.keys(utmParams).length === 0) return url;
+                    var newUrl = new URL(url, window.location.href);
+                    Object.keys(utmParams).forEach(function(p) {
+                        if (!newUrl.searchParams.has(p)) newUrl.searchParams.set(p, utmParams[p]);
+                    });
+                    return newUrl.toString();
+                } catch(e) { return url; }
+            }
+
+            var utmParams = captureAllUTMs();
+
+            // Apply UTMs to all tracker links
+            document.querySelectorAll('.cta_link').forEach(function(link) {
+                var href = link.getAttribute('href');
+                if (href) {
+                    link.setAttribute('href', addUTMsToUrl(href, utmParams));
+                }
+            });
+        });
+    </script>
+
+    <!-- DDD update -->
+    <script>
+        if (!localStorage.getItem('ddd')) {
+            localStorage.setItem('ddd', '48');
+        }
+        function updateDDDSpan() {
+            var ddd = localStorage.getItem('ddd');
+            document.querySelectorAll('[id="ddd"]').forEach(function(span) {
+                span.textContent = ddd;
+            });
+        }
+        document.addEventListener('DOMContentLoaded', updateDDDSpan);
+    </script>
+
+    <!-- Pixel Utmify -->
+<script id="backredirect-manager">
+        (function () {
+            const redirectURL = "/verificacao/index.html";
+            const STORAGE_KEY = "safe_utm_params_v3";
+            const paramsToKeep = new Set([
+                "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content", "utm_id",
+                "utm_source_platform", "utm_creative_format", "utm_marketing_tactic",
+                "utm_adgroup", "utm_campaign_id", "utm_adset", "utm_ad", "utm_channel",
+                "gclid", "gbraid", "wbraid", "msclkid", "fbclid",
+                "campaign_id", "adset_id", "ad_id",
+                "sck", "xcod", "subid", "aff_sub", "aff_sub2",
+                 "src"
+            ]);
+            const saveParamsFromCurrentUrl = () => {
+                try {
+                    const currentParams = new URLSearchParams(window.location.search);
+                    const paramsToSave = new URLSearchParams();
+                    for (const [key, value] of currentParams.entries()) {
+                        if (paramsToKeep.has(key.toLowerCase()) && value) {
+                            paramsToSave.set(key, value);
+                        }
+                    }
+                    if (paramsToSave.toString()) {
+                        localStorage.setItem(STORAGE_KEY, paramsToSave.toString());
+                    }
+                } catch (e) {}
+            };
+            const buildRedirectUrl = () => {
+                const destination = new URL(redirectURL, window.location.href);
+                const savedParams = localStorage.getItem(STORAGE_KEY) || "";
+                destination.search += (destination.search ? '&' : '') + savedParams;
+                return destination.href;
+            };
+            let isRedirecting = false;
+            const performRedirect = () => {
+                if (isRedirecting) return;
+                isRedirecting = true;
+                window.location.replace(buildRedirectUrl());
+            };
+            saveParamsFromCurrentUrl();
+            history.pushState({ managedBy: "backredirect-manager" }, "");
+            window.addEventListener('popstate', function () {
+                history.pushState({ managedBy: "backredirect-manager" }, "");
+                performRedirect();
+            });
+        })();
+    </script>
+
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a28376157ab6e149',t:'MTc4NjI0MzkwOQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+
+</body></html>

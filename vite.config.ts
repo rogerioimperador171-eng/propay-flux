@@ -7,6 +7,11 @@
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 export default defineConfig({
+  // Fora do sandbox da Lovable (ex.: build da Netlify via GitHub) o alvo do
+  // deploy é a Netlify: gera a função SSR em `.netlify/` e os estáticos em
+  // `dist/client`. Dentro do sandbox da Lovable o preset é forçado para
+  // Cloudflare automaticamente, então o preview/publish da Lovable continua igual.
+  nitro: { preset: "netlify" },
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
