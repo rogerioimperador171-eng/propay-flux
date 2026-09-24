@@ -914,3 +914,14 @@ ul li::before {
     border-radius: 999px;
     border: 1px solid #ef4444;
 }
+
+/* Sem zoom automático ao tocar no campo (iPhone amplia campos com fonte < 16px) */
+html {
+    touch-action: manipulation;
+    -webkit-text-size-adjust: 100%;
+}
+input,
+select,
+textarea {
+    font-size: 16px !important;
+}

@@ -51,7 +51,8 @@ export const Route = createFileRoute("/checkout")({
 
 type Method = "pix" | "card";
 
-const fieldClass = "h-11 rounded-lg text-sm";
+// 16px no celular: abaixo disso o iPhone dá zoom ao tocar no campo
+const fieldClass = "h-11 rounded-lg text-base md:text-sm";
 const labelClass = "text-xs font-normal text-muted-foreground";
 
 function CheckoutPage() {

@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', function () {
         TO: { name: 'Tocantins',           lat: -10.17, lng: -48.33, zoom: 6 }
     };
 
-    // Cidade-polo de cada DDD — o mapa aproxima na região real do número
+    // Centro da área de cada DDD — o mapa mostra só a região (sem nome de cidade)
     const DDD_TO_CITY = {
         11:['São Paulo',-23.55,-46.63], 12:['São José dos Campos',-23.18,-45.88], 13:['Santos',-23.96,-46.33],
         14:['Bauru',-22.31,-49.06], 15:['Sorocaba',-23.50,-47.45], 16:['Ribeirão Preto',-21.18,-47.81],
@@ -188,10 +188,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         const code = DDD_TO_STATE[ddd] || 'SP';
         const city = DDD_TO_CITY[ddd];
+        const state = STATES[code];
         if (city) {
-            return { name: city[0] + ' - ' + code, lat: city[1], lng: city[2], zoom: 10 };
+            return { name: 'Região DDD ' + ddd + ' · ' + state.name, lat: city[1], lng: city[2], zoom: 7 };
         }
-        return STATES[code];
+        return { name: 'Região ' + state.name, lat: state.lat, lng: state.lng, zoom: state.zoom };
     }
 
     // ========= Mapa de localização (substitui o GIF) =========
@@ -235,14 +236,11 @@ document.addEventListener('DOMContentLoaded', function () {
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
             maxZoom: 16
         }).addTo(map);
-        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}', {
-            maxZoom: 16
-        }).addTo(map);
 
         // Garante que o Leaflet recalcula dimensoes do container apos display:block
         requestAnimationFrame(function () { map.invalidateSize(); });
 
-        // Zoom na cidade-polo do DDD (ou no estado, se o DDD for desconhecido)
+        // Zoom na região do DDD (ou no estado, se o DDD for desconhecido)
         const finalZoom = state.zoom;
 
         // Animação de zoom em ~2.4s, ajusta texto, deixa marker, redireciona aos 3s
@@ -256,7 +254,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // Após o zoom completar, adiciona círculo radar GRANDE cobrindo a região
             setTimeout(function () {
                 const radarCircle = L.circle([state.lat, state.lng], {
-                    radius: finalZoom >= 10 ? 12000 : 280000, // ~12km na cidade, 280km no estado
+                    radius: finalZoom >= 7 ? 110000 : 280000, // ~110km na região do DDD, 280km no estado
                     color: '#ef4444',
                     fillColor: '#ef4444',
                     fillOpacity: 0.18,
