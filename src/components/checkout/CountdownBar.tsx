@@ -27,5 +27,4 @@ export function CountdownBar() {
       </div>
     </div>
   );
-
 }

@@ -1,42 +1,26 @@
-# EspiaZap — Funil + Checkout PIX (ProPixBR)
+# EspiaZap — Funil + Checkout Pix e Cartão (AmploPay)
 
 Aplicação React + Vite + TypeScript (TanStack Start) com o funil estático em `public/`
 (`/lp`, `/vsl`, `/verificacao`, `/whatsapp`, `/marido`, `/esposa`) e o checkout em `/checkout`.
 
-O pagamento PIX usa a API **https://api.propixbr.com** através de **Netlify Functions**,
-para que `x-client-secret` **nunca** apareça no frontend.
+Os pagamentos (Pix e cartão) usam a API da **AmploPay** através de **Netlify Functions**,
+para que as chaves **nunca** apareçam no frontend. Os pedidos ficam no **Netlify Database**.
 
 ---
 
 ## 1. Variáveis de ambiente
 
-| Variável               | Descrição                              |
-| ---------------------- | -------------------------------------- |
-| `PROPAY_CLIENT_ID`     | Client ID da ProPixBR (`live_...`)     |
-| `PROPAY_CLIENT_SECRET` | Client Secret da ProPixBR (`sk_...`)   |
-| `PROPAY_BASE_URL`      | Opcional. Padrão `https://api.propixbr.com` |
+| Key (nome)            | Value (valor)                               |
+| --------------------- | ------------------------------------------- |
+| `AMPLOPAY_PUBLIC_KEY` | Chave pública da AmploPay (`x-public-key`)  |
+| `AMPLOPAY_SECRET_KEY` | Chave secreta da AmploPay (`x-secret-key`)  |
 
 Na Netlify: **Site configuration → Environment variables → Add a variable**.
-Cadastre as duas variáveis com o escopo **Functions** (ou **All scopes**).
+Cadastre as duas variáveis com o escopo **Functions** (ou **All scopes**) e,
+depois, faça um novo deploy. Não coloque os valores no código nem no repositório.
 
-> Importante: variáveis cadastradas somente no GitHub não são transferidas
-> automaticamente para a Netlify. Não coloque os valores no código, no
-> `netlify.toml` ou no repositório. Eles precisam existir também no painel da
-> Netlify para que as Functions consigam autenticar na ProPixBR.
-
-Localmente: crie um arquivo `.env` na raiz (não commite):
-
-```
-PROPAY_CLIENT_ID=live_xxxxxxxxxxxxxxxx
-PROPAY_CLIENT_SECRET=sk_xxxxxxxxxxxxxxxx
-```
-
-### Como trocar o Client ID / Client Secret
-
-Basta alterar os valores das variáveis acima na Netlify e clicar em
-**Deploys → Trigger deploy → Clear cache and deploy site**.
-Nenhuma alteração de código é necessária — as credenciais são lidas apenas em
-`netlify/functions/_propay.ts`.
+As variáveis antigas `PROPAY_CLIENT_ID` / `PROPAY_CLIENT_SECRET` não são mais usadas
+e podem ser apagadas.
 
 ---
 
@@ -48,13 +32,13 @@ Nenhuma alteração de código é necessária — as credenciais são lidas apen
    - build: `npm run build`
    - publish: `dist`
    - functions: `netlify/functions`
-4. Cadastre `PROPAY_CLIENT_ID` e `PROPAY_CLIENT_SECRET`.
+4. Cadastre `AMPLOPAY_PUBLIC_KEY` e `AMPLOPAY_SECRET_KEY`.
 5. Em **Deploys**, escolha **Trigger deploy → Clear cache and deploy site**.
 
 O `netlify.toml` também cria:
 
-- `/api/public/pix/create` → função `pix-create`
-- `/api/public/pix/status` → função `pix-status`
+- `/api/pay/create` → função `pay-create`
+- `/api/pay/status` → função `pay-status`
 - `/` → `/lp/index.html` (entrada do funil)
 - `/__l5e/*` → proxy do CDN onde está hospedado o vídeo da VSL (73 MB, fora do repositório)
 - `/*` → função SSR do app React (ex.: `/checkout`)
@@ -76,7 +60,7 @@ netlify dev
 ```
 
 O `netlify dev` carrega o `.env`, sobe as functions e o Vite juntos, então o
-checkout gera PIX real em `http://localhost:8888/checkout`.
+checkout gera Pix/cartão real em `http://localhost:8888/checkout`.
 
 Build de produção:
 
@@ -86,54 +70,28 @@ npm run build
 
 ---
 
-## 4. Fluxo do pagamento PIX
+## 4. Fluxo do pagamento
 
-1. Usuário clica em **PAGAR COM PIX** no `/checkout`.
-2. O frontend chama `POST /api/public/pix/create` (Netlify Function).
-3. A function faz `POST https://api.propixbr.com/api/v1/deposit` com os headers
-   `x-client-id`, `x-client-secret`, `Content-Type: application/json`
-   e o corpo `{ amount, description, payerName, payerDocument }`.
-4. Retorna `transactionId`, `copyPaste`, `qrcodeUrl`, `status`.
-5. A tela mostra imediatamente o **QR Code**, o **PIX Copia e Cola**, o botão
-   **COPIAR PIX** e o status *Aguardando pagamento*.
-6. A cada **3 segundos** o app chama `POST /api/public/pix/status` com o
-   `transactionId`, que consulta `POST /api/v1/check`.
-7. Quando `transactionState` = `COMPLETO`, o polling para e a tela de
-   pagamento aprovado aparece — sem recarregar a página.
+1. No `/checkout` o comprador escolhe **Pix** ou **Cartão**.
+2. O frontend chama `POST /.netlify/functions/pay-create`. A função recalcula o
+   total no servidor (`src/lib/pricing.ts`), grava o pedido e chama
+   `POST https://app.amplopay.com/api/v1/gateway/pix/receive` ou
+   `.../card/receive` com os headers `x-public-key` e `x-secret-key`.
+3. Pix: a tela mostra o QR Code e o Copia e Cola; a cada 3 s consulta
+   `pay-status`. Cartão: aprovado na hora vai direto para a tela de sucesso;
+   em análise, o status é acompanhado da mesma forma.
+4. A AmploPay avisa as mudanças de status em `amplopay-webhook` (URL assinada
+   por pedido enviada como `callbackUrl`), que marca o pedido como pago.
 
-Erros da API, falta de credenciais e timeout (20s) exibem mensagem amigável com
-opção de **tentar novamente**; o site nunca quebra.
+## 5. Rastreamento (Safyro)
 
-### Roteamento (e a mensagem "Only HTML requests are supported here")
+`public/tracking/pixels.js` contém o Safyro Tracker (Meta Pixel + CAPI) e é
+carregado em todas as páginas do funil e no checkout.
 
-Essa mensagem vinha do handler de **SSR** do app: na Netlify o `POST` para
-`/api/public/pix/create` era capturado pela função de SSR (`path = "/*"`) antes
-de chegar à Netlify Function, e o SSR só aceita requisições HTML.
-
-Correção aplicada: o frontend chama primeiro a **URL nativa** da Function —
-`/.netlify/functions/pix-create` e `/.netlify/functions/pix-status`. O Netlify
-reserva `/.netlify/*` e nunca o encaminha para o SSR, então a Function sempre
-recebe o POST. Se essas URLs não existirem (preview da Lovable, onde não há
-Netlify Functions), o cliente cai automaticamente nas rotas de servidor do app
-`/api/public/pix/*`, que usam exatamente as mesmas credenciais do servidor.
-
-O QR Code também tem redundância: usa a imagem do provedor e, se ela vier vazia
-ou falhar, é gerada localmente a partir do código Copia e Cola.
-
----
-
-## 5. Como atualizar a API futuramente
-
-Todo o contato com o provedor está isolado em:
-
-- `netlify/functions/_propay.ts` — base URL, headers e tratamento de erro/timeout
-- `netlify/functions/pix-create.ts` — criação do depósito (`/api/v1/deposit`)
-- `netlify/functions/pix-status.ts` — consulta (`/api/v1/check`)
-- `src/lib/pix-client.ts` — chamadas do frontend
-- `src/lib/pix.schemas.ts` — formato das respostas
-
-Para mudar de provedor ou de endpoint, altere apenas esses arquivos; o
-checkout e o funil continuam iguais.
+- **InitiateCheckout**: disparado automaticamente ao abrir `/checkout`.
+- **Purchase**: disparado quando a AmploPay confirma a venda (Pix ou cartão) —
+  pelo navegador e pelo servidor (webhook), com o mesmo `eventID` (id do
+  pedido) para o Meta deduplicar.
 
 ---
 

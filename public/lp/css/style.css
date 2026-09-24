@@ -897,3 +897,20 @@ ul li::before {
     font-size: 18px;
     vertical-align: middle;
 }
+
+/* Rótulo da cidade localizada pelo DDD */
+.scan-map-label {
+    background: transparent;
+    border: none;
+}
+.scan-map-label span {
+    display: inline-block;
+    transform: translate(-50%, -140%);
+    white-space: nowrap;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    font: 600 13px/1.2 system-ui, sans-serif;
+    padding: 5px 10px;
+    border-radius: 999px;
+    border: 1px solid #ef4444;
+}

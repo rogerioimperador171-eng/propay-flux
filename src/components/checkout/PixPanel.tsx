@@ -3,9 +3,14 @@ import { Check, Copy, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import QRCode from "qrcode";
 import { Button } from "@/components/ui/button";
-import { checkPixDeposit } from "@/lib/pix-client";
+import { checkPayment } from "@/lib/payment-client";
 import { formatBRL } from "@/lib/masks";
-import type { PixDeposit } from "@/lib/pix.server";
+
+export type PixDeposit = {
+  orderId: string;
+  copyPaste: string;
+  qrcodeUrl: string;
+};
 
 /**
  * Normaliza o QR devolvido pelo provedor: pode vir como URL, data URL, ou
@@ -22,7 +27,6 @@ function normalizeQrSource(value: string): string {
   }
   return raw;
 }
-
 
 type Props = {
   deposit: PixDeposit;
@@ -71,15 +75,14 @@ export function PixPanel({ deposit, amount, onApproved }: Props) {
       .catch(() => setQrSource(""));
   };
 
-
   useEffect(() => {
     let cancelled = false;
     const interval = setInterval(async () => {
       if (approvedRef.current) return;
       try {
-        const result = await checkPixDeposit(deposit.transactionId);
+        const result = await checkPayment(deposit.orderId);
         if (cancelled) return;
-        if (result.transactionState === "COMPLETO") {
+        if (result.status === "PAID") {
           approvedRef.current = true;
           clearInterval(interval);
           setStatusLabel("Pagamento aprovado");
@@ -94,7 +97,7 @@ export function PixPanel({ deposit, amount, onApproved }: Props) {
       cancelled = true;
       clearInterval(interval);
     };
-  }, [deposit.transactionId, onApproved]);
+  }, [deposit.orderId, onApproved]);
 
   const copy = async () => {
     try {
@@ -121,7 +124,6 @@ export function PixPanel({ deposit, amount, onApproved }: Props) {
           onError={handleQrError}
           className="mx-auto mt-4 h-44 w-44 rounded-lg border border-border bg-background object-contain p-2"
         />
-
       ) : null}
 
       {deposit.copyPaste ? (
