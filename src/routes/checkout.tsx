@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { CheckCircle2, CreditCard, Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -9,16 +9,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CountdownBar } from "@/components/checkout/CountdownBar";
 import { OrderBumpList } from "@/components/checkout/OrderBumpList";
-import { PixPanel } from "@/components/checkout/PixPanel";
+import { PixPanel, type PixDeposit } from "@/components/checkout/PixPanel";
 import { SecureFooter } from "@/components/checkout/SecureFooter";
 import { BASE_PRICE, ORDER_BUMPS } from "@/components/checkout/order-bumps";
-import { createPixDeposit } from "@/lib/pix-client";
-import type { PixDeposit } from "@/lib/pix.server";
+import { checkPayment, createPayment, trackPurchase } from "@/lib/payment-client";
 import {
   formatBRL,
-  generateCpf,
+  isValidCpf,
   isValidEmail,
   maskCardNumber,
+  maskCep,
+  maskCpf,
   maskCvv,
   maskExpiry,
   maskPhone,
@@ -42,6 +43,8 @@ export const Route = createFileRoute("/checkout")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
+    // Safyro Tracker: dispara InitiateCheckout ao abrir o checkout
+    scripts: [{ src: "/tracking/pixels.js" }],
   }),
   component: CheckoutPage,
 });
@@ -62,12 +65,21 @@ function CheckoutPage() {
   const [cardName, setCardName] = useState("");
   const [expiry, setExpiry] = useState("");
   const [cvv, setCvv] = useState("");
+  const [cpf, setCpf] = useState("");
+  const [cep, setCep] = useState("");
+  const [street, setStreet] = useState("");
+  const [addressNumber, setAddressNumber] = useState("");
+  const [neighborhood, setNeighborhood] = useState("");
+  const [city, setCity] = useState("");
+  const [uf, setUf] = useState("");
   const [cardError, setCardError] = useState("");
+  const [cardReviewId, setCardReviewId] = useState<string | null>(null);
 
   const [loading, setLoading] = useState(false);
   const [deposit, setDeposit] = useState<PixDeposit | null>(null);
   const [approved, setApproved] = useState(false);
   const [pixError, setPixError] = useState("");
+  const lastCep = useRef("");
 
   const total = useMemo(
     () =>
@@ -75,6 +87,62 @@ function CheckoutPage() {
       ORDER_BUMPS.filter((b) => bumps.includes(b.id)).reduce((sum, b) => sum + b.price, 0),
     [bumps],
   );
+
+  const markApproved = useCallback(
+    (orderId: string) => {
+      trackPurchase(orderId, total);
+      setApproved(true);
+    },
+    [total],
+  );
+
+  const handlePixApproved = useCallback(() => {
+    if (deposit) markApproved(deposit.orderId);
+  }, [deposit, markApproved]);
+
+  // Autopreenche o endereço pelo CEP (ViaCEP)
+  useEffect(() => {
+    const d = onlyDigits(cep);
+    if (d.length !== 8 || d === lastCep.current) return;
+    lastCep.current = d;
+    fetch(`https://viacep.com.br/ws/${d}/json/`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (data?.erro) return;
+        if (data.logradouro) setStreet(data.logradouro);
+        if (data.bairro) setNeighborhood(data.bairro);
+        if (data.localidade) setCity(data.localidade);
+        if (data.uf) setUf(String(data.uf).toUpperCase());
+      })
+      .catch(() => null);
+  }, [cep]);
+
+  // Cartão em análise: acompanha o status até a confirmação
+  useEffect(() => {
+    if (!cardReviewId) return;
+    let attempts = 0;
+    const interval = setInterval(async () => {
+      attempts += 1;
+      try {
+        const { status } = await checkPayment(cardReviewId);
+        if (status === "PAID") {
+          clearInterval(interval);
+          markApproved(cardReviewId);
+        } else if (status === "FAILED" || attempts >= 40) {
+          clearInterval(interval);
+          setCardReviewId(null);
+          setCardError(
+            status === "FAILED"
+              ? "Pagamento recusado pela operadora do cartão. Verifique os dados ou pague com Pix."
+              : "Seu pagamento ainda está em análise. Você receberá a confirmação por e-mail.",
+          );
+        }
+      } catch {
+        // erro transitório de rede: tenta de novo no próximo ciclo
+      }
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [cardReviewId, markApproved]);
 
   const toggleBump = (id: string) =>
     setBumps((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
@@ -94,41 +162,91 @@ function CheckoutPage() {
     }
 
     if (method === "card") {
-      if (onlyDigits(cardNumber).length !== 16) {
-        setCardError("Informe os 16 dígitos do cartão.");
+      const number = onlyDigits(cardNumber);
+      const exp = onlyDigits(expiry);
+      const month = Number(exp.slice(0, 2));
+      let invalidCard = "";
+      if (number.length < 13) invalidCard = "Informe o número completo do cartão.";
+      else if (cardName.trim().length < 3) invalidCard = "Informe o nome impresso no cartão.";
+      else if (exp.length !== 4 || month < 1 || month > 12)
+        invalidCard = "Informe a validade no formato MM/AA.";
+      else if (cvv.length < 3) invalidCard = "Informe o CVV do cartão.";
+      else if (!isValidCpf(cpf)) invalidCard = "Informe um CPF válido.";
+      else if (onlyDigits(cep).length !== 8) invalidCard = "Informe um CEP válido.";
+      else if (!street.trim() || !addressNumber.trim() || !neighborhood.trim() || !city.trim())
+        invalidCard = "Preencha o endereço de cobrança.";
+      else if (!/^[A-Za-z]{2}$/.test(uf.trim())) invalidCard = "Informe a UF (ex.: SP).";
+      if (invalidCard) {
+        setCardError(invalidCard);
         return;
       }
-      if (onlyDigits(expiry).length !== 4) {
-        setCardError("Informe a validade no formato MM/AA.");
-        return;
-      }
-      if (cvv.length !== 3) {
-        setCardError("O CVV deve ter 3 dígitos.");
-        return;
-      }
+
       setCardError("");
       setLoading(true);
-      setTimeout(() => {
+      try {
+        const result = await createPayment({
+          method: "card",
+          name: name.trim(),
+          email: email.trim(),
+          phone: onlyDigits(phone),
+          bumps,
+          document: onlyDigits(cpf),
+          installments: 1,
+          card: {
+            number,
+            owner: cardName.trim(),
+            expMonth: exp.slice(0, 2),
+            expYear: exp.slice(2),
+            cvv,
+          },
+          address: {
+            zipCode: onlyDigits(cep),
+            street: street.trim(),
+            number: addressNumber.trim(),
+            neighborhood: neighborhood.trim(),
+            city: city.trim(),
+            state: uf.trim().toUpperCase(),
+          },
+        });
+        if (result.status === "PAID") {
+          markApproved(result.orderId);
+        } else if (result.status === "FAILED") {
+          const message =
+            result.error || "Pagamento recusado. Verifique os dados ou pague com Pix.";
+          setCardError(message);
+          toast.error(message);
+        } else {
+          setCardReviewId(result.orderId);
+        }
+      } catch (error) {
+        const message =
+          error instanceof Error && error.message
+            ? error.message
+            : "Não conseguimos processar o cartão agora. Tente novamente.";
+        setCardError(message);
+        toast.error(message);
+      } finally {
         setLoading(false);
-        setCardError("Pagamento RECUSADO pela operadora do cartão. Pague com Pix para aprovar.");
-        toast.error("Cartão recusado. Tente pagar com Pix.");
-      }, 2000);
+      }
       return;
     }
 
     setLoading(true);
     setPixError("");
     try {
-      const result = await createPixDeposit({
-        amount: Number(total.toFixed(2)),
-        description: "Licença de Monitoramento em Tempo Real",
-        payerName: name.trim(),
-        payerDocument: generateCpf(),
-        // telefone e e-mail do comprador: usados na recuperação de venda
-        payerPhone: onlyDigits(phone),
-        payerEmail: email.trim(),
+      const result = await createPayment({
+        method: "pix",
+        name: name.trim(),
+        email: email.trim(),
+        phone: onlyDigits(phone),
+        bumps,
       });
-      setDeposit(result);
+      if (!result.pix) throw new Error(result.error || "Não conseguimos gerar o Pix agora.");
+      setDeposit({
+        orderId: result.orderId,
+        copyPaste: result.pix.code,
+        qrcodeUrl: result.pix.image,
+      });
     } catch (error) {
       const message =
         error instanceof Error && error.message
@@ -169,7 +287,7 @@ function CheckoutPage() {
 
       {deposit ? (
         <div className="mt-5">
-          <PixPanel deposit={deposit} amount={total} onApproved={() => setApproved(true)} />
+          <PixPanel deposit={deposit} amount={total} onApproved={handlePixApproved} />
         </div>
       ) : (
         <>
@@ -307,10 +425,112 @@ function CheckoutPage() {
                     value={cvv}
                     onChange={(e) => setCvv(maskCvv(e.target.value))}
                     placeholder="000"
+                    autoComplete="cc-csc"
                     className={fieldClass}
                   />
                 </div>
               </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="cpf" className={labelClass}>
+                  CPF do titular
+                </Label>
+                <Input
+                  id="cpf"
+                  inputMode="numeric"
+                  value={cpf}
+                  onChange={(e) => setCpf(maskCpf(e.target.value))}
+                  placeholder="000.000.000-00"
+                  className={fieldClass}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="space-y-1.5">
+                  <Label htmlFor="cep" className={labelClass}>
+                    CEP
+                  </Label>
+                  <Input
+                    id="cep"
+                    inputMode="numeric"
+                    value={cep}
+                    onChange={(e) => setCep(maskCep(e.target.value))}
+                    placeholder="00000-000"
+                    className={fieldClass}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="addressNumber" className={labelClass}>
+                    Número
+                  </Label>
+                  <Input
+                    id="addressNumber"
+                    value={addressNumber}
+                    maxLength={20}
+                    onChange={(e) => setAddressNumber(e.target.value)}
+                    placeholder="123"
+                    className={fieldClass}
+                  />
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="street" className={labelClass}>
+                  Rua
+                </Label>
+                <Input
+                  id="street"
+                  value={street}
+                  maxLength={160}
+                  onChange={(e) => setStreet(e.target.value)}
+                  placeholder="Rua / Avenida"
+                  className={fieldClass}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="neighborhood" className={labelClass}>
+                  Bairro
+                </Label>
+                <Input
+                  id="neighborhood"
+                  value={neighborhood}
+                  maxLength={120}
+                  onChange={(e) => setNeighborhood(e.target.value)}
+                  placeholder="Bairro"
+                  className={fieldClass}
+                />
+              </div>
+              <div className="grid grid-cols-[1fr_5rem] gap-2">
+                <div className="space-y-1.5">
+                  <Label htmlFor="city" className={labelClass}>
+                    Cidade
+                  </Label>
+                  <Input
+                    id="city"
+                    value={city}
+                    maxLength={120}
+                    onChange={(e) => setCity(e.target.value)}
+                    placeholder="Cidade"
+                    className={fieldClass}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="uf" className={labelClass}>
+                    UF
+                  </Label>
+                  <Input
+                    id="uf"
+                    value={uf}
+                    maxLength={2}
+                    onChange={(e) => setUf(e.target.value.replace(/[^a-zA-Z]/g, "").toUpperCase())}
+                    placeholder="SP"
+                    className={fieldClass}
+                  />
+                </div>
+              </div>
+              {cardReviewId ? (
+                <p className="flex items-center justify-center gap-2 text-center text-xs font-semibold text-warn">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Pagamento em análise pela operadora…
+                </p>
+              ) : null}
               {cardError ? (
                 <p className="text-center text-xs font-semibold text-danger">{cardError}</p>
               ) : null}
@@ -333,7 +553,7 @@ function CheckoutPage() {
             variant="brand"
             size="lg"
             className="mt-2 w-full text-sm"
-            disabled={loading}
+            disabled={loading || cardReviewId !== null}
             onClick={handleSubmit}
           >
             {loading ? <Loader2 className="animate-spin" /> : null}

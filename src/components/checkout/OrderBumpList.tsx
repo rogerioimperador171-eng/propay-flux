@@ -49,5 +49,4 @@ export function OrderBumpList({ selected, onToggle }: Props) {
       })}
     </div>
   );
-
 }

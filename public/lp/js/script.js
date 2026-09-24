@@ -147,18 +147,50 @@ document.addEventListener('DOMContentLoaded', function () {
         TO: { name: 'Tocantins',           lat: -10.17, lng: -48.33, zoom: 6 }
     };
 
+    // Cidade-polo de cada DDD — o mapa aproxima na região real do número
+    const DDD_TO_CITY = {
+        11:['São Paulo',-23.55,-46.63], 12:['São José dos Campos',-23.18,-45.88], 13:['Santos',-23.96,-46.33],
+        14:['Bauru',-22.31,-49.06], 15:['Sorocaba',-23.50,-47.45], 16:['Ribeirão Preto',-21.18,-47.81],
+        17:['São José do Rio Preto',-20.81,-49.38], 18:['Presidente Prudente',-22.12,-51.39], 19:['Campinas',-22.91,-47.06],
+        21:['Rio de Janeiro',-22.91,-43.17], 22:['Campos dos Goytacazes',-21.75,-41.32], 24:['Volta Redonda',-22.52,-44.10],
+        27:['Vitória',-20.32,-40.34], 28:['Cachoeiro de Itapemirim',-20.85,-41.11],
+        31:['Belo Horizonte',-19.92,-43.94], 32:['Juiz de Fora',-21.76,-43.35], 33:['Governador Valadares',-18.85,-41.95],
+        34:['Uberlândia',-18.92,-48.28], 35:['Poços de Caldas',-21.79,-46.56], 37:['Divinópolis',-20.14,-44.88],
+        38:['Montes Claros',-16.73,-43.86],
+        41:['Curitiba',-25.43,-49.27], 42:['Ponta Grossa',-25.09,-50.16], 43:['Londrina',-23.31,-51.16],
+        44:['Maringá',-23.42,-51.94], 45:['Cascavel',-24.96,-53.46], 46:['Francisco Beltrão',-26.08,-53.05],
+        47:['Joinville',-26.30,-48.85], 48:['Florianópolis',-27.60,-48.55], 49:['Chapecó',-27.10,-52.62],
+        51:['Porto Alegre',-30.03,-51.23], 53:['Pelotas',-31.77,-52.34], 54:['Caxias do Sul',-29.17,-51.18],
+        55:['Santa Maria',-29.69,-53.81],
+        61:['Brasília',-15.79,-47.88], 62:['Goiânia',-16.69,-49.26], 63:['Palmas',-10.18,-48.33],
+        64:['Rio Verde',-17.79,-50.92], 65:['Cuiabá',-15.60,-56.10], 66:['Rondonópolis',-16.47,-54.64],
+        67:['Campo Grande',-20.47,-54.62], 68:['Rio Branco',-9.97,-67.81], 69:['Porto Velho',-8.76,-63.90],
+        71:['Salvador',-12.97,-38.50], 73:['Ilhéus',-14.79,-39.05], 74:['Juazeiro',-9.41,-40.50],
+        75:['Feira de Santana',-12.27,-38.97], 77:['Vitória da Conquista',-14.86,-40.84], 79:['Aracaju',-10.91,-37.07],
+        81:['Recife',-8.05,-34.88], 82:['Maceió',-9.67,-35.74], 83:['João Pessoa',-7.12,-34.86],
+        84:['Natal',-5.79,-35.21], 85:['Fortaleza',-3.73,-38.53], 86:['Teresina',-5.09,-42.80],
+        87:['Petrolina',-9.39,-40.50], 88:['Juazeiro do Norte',-7.21,-39.32], 89:['Picos',-7.08,-41.47],
+        91:['Belém',-1.46,-48.49], 92:['Manaus',-3.12,-60.02], 93:['Santarém',-2.44,-54.71],
+        94:['Marabá',-5.37,-49.12], 95:['Boa Vista',2.82,-60.67], 96:['Macapá',0.03,-51.07],
+        97:['Tefé',-3.35,-64.71], 98:['São Luís',-2.53,-44.30], 99:['Imperatriz',-5.52,-47.47]
+    };
+
     function getStateFromInput() {
         // Primeiro tenta extrair DDD do input atual; fallback pra localStorage
         let ddd = null;
         try {
-            const digits = (phoneInput.value || '').replace(/\D/g, '').replace(/^55/, '').replace(/^0+/, '');
+            const digits = (phoneInput.value || '').replace(/\D/g, '').replace(/^55(?=\d{10,11}$)/, '').replace(/^0+/, '');
             if (digits.length >= 2) ddd = parseInt(digits.slice(0, 2), 10);
         } catch (_) {}
-        if (!ddd) {
+        if (!DDD_TO_STATE[ddd]) {
             const stored = parseInt(localStorage.getItem('ddd'), 10);
             if (Number.isFinite(stored)) ddd = stored;
         }
         const code = DDD_TO_STATE[ddd] || 'SP';
+        const city = DDD_TO_CITY[ddd];
+        if (city) {
+            return { name: city[0] + ' - ' + code, lat: city[1], lng: city[2], zoom: 10 };
+        }
         return STATES[code];
     }
 
@@ -198,16 +230,20 @@ document.addEventListener('DOMContentLoaded', function () {
             tap: false
         });
 
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
-            maxZoom: 19,
-            subdomains: 'abcd'
+        // Tiles escuros da Esri: não exigem API key (os da CARTO passaram a
+        // exibir "API KEY REQUIRED" por cima do mapa).
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+            maxZoom: 16
+        }).addTo(map);
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}', {
+            maxZoom: 16
         }).addTo(map);
 
         // Garante que o Leaflet recalcula dimensoes do container apos display:block
         requestAnimationFrame(function () { map.invalidateSize(); });
 
-        // Zoom mais aberto: -1 nível em relação ao state.zoom, mínimo 5 (estado inteiro)
-        const finalZoom = Math.max(state.zoom - 1, 5);
+        // Zoom na cidade-polo do DDD (ou no estado, se o DDD for desconhecido)
+        const finalZoom = state.zoom;
 
         // Animação de zoom em ~2.4s, ajusta texto, deixa marker, redireciona aos 3s
         setTimeout(function () {
@@ -220,7 +256,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // Após o zoom completar, adiciona círculo radar GRANDE cobrindo a região
             setTimeout(function () {
                 const radarCircle = L.circle([state.lat, state.lng], {
-                    radius: 280000, // 280km — cobre estado inteiro
+                    radius: finalZoom >= 10 ? 12000 : 280000, // ~12km na cidade, 280km no estado
                     color: '#ef4444',
                     fillColor: '#ef4444',
                     fillOpacity: 0.18,
@@ -233,10 +269,15 @@ document.addEventListener('DOMContentLoaded', function () {
                     const el = radarCircle.getElement();
                     if (el) el.classList.add('radar-circle-anim');
                 } catch (e) { /* noop */ }
-            }, 2400);
+
+                L.marker([state.lat, state.lng], {
+                    icon: L.divIcon({ className: 'scan-map-label', html: '<span>📍 ' + state.name + '</span>', iconSize: null })
+                }).addTo(map);
+            }, 2500);
         }, 100);
 
-        setTimeout(redirectToNextPage, 3000);
+        // Deixa a região localizada visível por ~2s antes de seguir
+        setTimeout(redirectToNextPage, 4800);
     }
 
     function getUTMParams() {

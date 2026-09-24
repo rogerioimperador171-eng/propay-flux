@@ -21,9 +21,9 @@ export function maskCpf(value: string) {
   return `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6, 9)}-${d.slice(9)}`;
 }
 
-/** 0000 0000 0000 0000 */
+/** 0000 0000 0000 0000 (até 19 dígitos) */
 export function maskCardNumber(value: string) {
-  const d = onlyDigits(value).slice(0, 16);
+  const d = onlyDigits(value).slice(0, 19);
   return d.replace(/(\d{4})(?=\d)/g, "$1 ");
 }
 
@@ -34,9 +34,15 @@ export function maskExpiry(value: string) {
   return `${d.slice(0, 2)}/${d.slice(2)}`;
 }
 
-/** exactly 3 digits */
+/** 3 dígitos (4 no Amex) */
 export function maskCvv(value: string) {
-  return onlyDigits(value).slice(0, 3);
+  return onlyDigits(value).slice(0, 4);
+}
+
+/** 00000-000 */
+export function maskCep(value: string) {
+  const d = onlyDigits(value).slice(0, 8);
+  return d.length <= 5 ? d : `${d.slice(0, 5)}-${d.slice(5)}`;
 }
 
 export function formatBRL(value: number) {

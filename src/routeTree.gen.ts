@@ -11,8 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CheckoutRouteImport } from './routes/checkout'
-import { Route as ApiPublicPixCreateRouteImport } from './routes/api/public/pix/create'
-import { Route as ApiPublicPixStatusRouteImport } from './routes/api/public/pix/status'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -24,55 +22,31 @@ const CheckoutRoute = CheckoutRouteImport.update({
   path: '/checkout',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicPixCreateRoute = ApiPublicPixCreateRouteImport.update({
-  id: '/api/public/pix/create',
-  path: '/api/public/pix/create',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicPixStatusRoute = ApiPublicPixStatusRouteImport.update({
-  id: '/api/public/pix/status',
-  path: '/api/public/pix/status',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/checkout': typeof CheckoutRoute
-  '/api/public/pix/create': typeof ApiPublicPixCreateRoute
-  '/api/public/pix/status': typeof ApiPublicPixStatusRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/checkout': typeof CheckoutRoute
-  '/api/public/pix/create': typeof ApiPublicPixCreateRoute
-  '/api/public/pix/status': typeof ApiPublicPixStatusRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/checkout': typeof CheckoutRoute
-  '/api/public/pix/create': typeof ApiPublicPixCreateRoute
-  '/api/public/pix/status': typeof ApiPublicPixStatusRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    '/' | '/checkout' | '/api/public/pix/create' | '/api/public/pix/status'
+  fullPaths: '/' | '/checkout'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/checkout' | '/api/public/pix/create' | '/api/public/pix/status'
-  id:
-    | '__root__'
-    | '/'
-    | '/checkout'
-    | '/api/public/pix/create'
-    | '/api/public/pix/status'
+  to: '/' | '/checkout'
+  id: '__root__' | '/' | '/checkout'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CheckoutRoute: typeof CheckoutRoute
-  ApiPublicPixCreateRoute: typeof ApiPublicPixCreateRoute
-  ApiPublicPixStatusRoute: typeof ApiPublicPixStatusRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -91,28 +65,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CheckoutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/pix/create': {
-      id: '/api/public/pix/create'
-      path: '/api/public/pix/create'
-      fullPath: '/api/public/pix/create'
-      preLoaderRoute: typeof ApiPublicPixCreateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/pix/status': {
-      id: '/api/public/pix/status'
-      path: '/api/public/pix/status'
-      fullPath: '/api/public/pix/status'
-      preLoaderRoute: typeof ApiPublicPixStatusRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CheckoutRoute: CheckoutRoute,
-  ApiPublicPixCreateRoute: ApiPublicPixCreateRoute,
-  ApiPublicPixStatusRoute: ApiPublicPixStatusRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

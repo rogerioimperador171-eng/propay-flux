@@ -1,4 +1,4 @@
-# Netlify — build do app (Vite / TanStack Start) + Netlify Functions do PIX
+# Netlify — build do app (Vite / TanStack Start) + Netlify Functions de pagamento (AmploPay)
 #
 # IMPORTANTE: no build da Netlify o Nitro usa o preset "netlify" (ver
 # vite.config.ts). Nesse preset os arquivos estáticos saem em `dist/` e a
@@ -16,17 +16,18 @@
   node_bundler = "esbuild"
   directory = "netlify/functions"
 
-# As funções já declaram `config.path`, mas mantemos os redirects como
-# garantia caso o roteamento por path não esteja habilitado no site.
+# Pagamentos (AmploPay — Pix e cartão) respondem na URL nativa das Functions:
+#   /.netlify/functions/pay-create, pay-status e amplopay-webhook
+# Aliases amigáveis:
 [[redirects]]
-  from = "/api/public/pix/create"
-  to = "/.netlify/functions/pix-create"
+  from = "/api/pay/create"
+  to = "/.netlify/functions/pay-create"
   status = 200
   force = true
 
 [[redirects]]
-  from = "/api/public/pix/status"
-  to = "/.netlify/functions/pix-status"
+  from = "/api/pay/status"
+  to = "/.netlify/functions/pay-status"
   status = 200
   force = true
 

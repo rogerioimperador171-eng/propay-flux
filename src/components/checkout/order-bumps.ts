@@ -1,8 +1,9 @@
 import spygram from "@/assets/IMG_0453.png.asset.json";
 import vitalicio from "@/assets/IMG_0454.png.asset.json";
 import redes from "@/assets/IMG_0455.jpeg.asset.json";
+import { BUMP_PRICES } from "@/lib/pricing";
 
-export const BASE_PRICE = 38.97;
+export { BASE_PRICE } from "@/lib/pricing";
 
 export type OrderBump = {
   id: string;
@@ -22,7 +23,7 @@ export const ORDER_BUMPS: OrderBump[] = [
     title: "SPYGRAM - Espião de Instagram",
     description: "Adquirir o Acesso ao Espião de Instagram",
     from: 38.97,
-    price: 23.9,
+    price: BUMP_PRICES["spygram"]!,
     image: spygram.url,
     alt: "Ícone do SPYGRAM, espião de Instagram",
   },
@@ -32,7 +33,7 @@ export const ORDER_BUMPS: OrderBump[] = [
     title: "ACESSO VITALICIO",
     description: "Adquirir também O ACESSO VITALICIO AO APP",
     from: 39.9,
-    price: 29.9,
+    price: BUMP_PRICES["vitalicio"]!,
     image: vitalicio.url,
     alt: "Selo de acesso vitalício ao aplicativo",
   },
@@ -43,7 +44,7 @@ export const ORDER_BUMPS: OrderBump[] = [
     description:
       "Adquirir também ACESSO A DIVERSAS REDES SOCIAIS (FACEBOOK, TIKTOK, TELEGRAM E MAIS)",
     from: 37.9,
-    price: 17.9,
+    price: BUMP_PRICES["redes"]!,
     image: redes.url,
     alt: "Ícone de espionagem de outras redes sociais",
   },
